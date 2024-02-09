@@ -1,0 +1,282 @@
+openapi: "3.0.3"
+info:
+  title: onecx-search-config-svc
+  version: "1.0"
+servers:
+  - url: https://localhost:8080
+tags:
+  - name: SearchConfigInternal
+    description: Execute Search Config CRUD operations
+paths:
+  /v1/searchTemplates:
+    post:
+      tags:
+        - SearchConfigInternal
+      summary: Creates the search template.
+      description: Creates the search template.
+      operationId: createSearchTemplate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchTemplate'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTemplate'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /v1/searchTemplates/default/{application}/{page}/{user}:
+    get:
+      tags:
+        - SearchConfigInternal
+      summary: "Gets the default template for application, page and user."
+      description: "The default template for the application, page and user is returned."
+      operationId: getDefaultSearchTemplate
+      parameters:
+        - name: application
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: page
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: user
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTemplate'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /v1/searchTemplates/search/criteria:
+    post:
+      tags:
+        - SearchConfigInternal
+      summary: Finds search templates by criteria.
+      description: The search templates are found by search criteria.
+      operationId: findBySearchCriteria
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchTemplateSearchCriteria'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchTemplate'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /v1/searchTemplates/{templateId}:
+    get:
+      tags:
+        - SearchConfigInternal
+      summary: Finds search templates by it's id.
+      description: Gets the search template by it's id.
+      operationId: getSearchTemplateById
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTemplate'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+    put:
+      tags:
+        - SearchConfigInternal
+      summary: Updates the search template.
+      description: Updates the search template.
+      operationId: updateSearchTemplate
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchTemplate'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchTemplate'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+    delete:
+      tags:
+        - SearchConfigInternal
+      summary: Deletes the search template.
+      description: Deletes the search template.
+      operationId: deleteSearchTemplate
+      parameters:
+        - name: templateId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: No content
+          content:
+            application/json: { }
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+components:
+  schemas:
+    OffsetDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00
+    SearchTemplate:
+      type: object
+      properties:
+        version:
+          format: int32
+          type: integer
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+        id:
+          type: string
+        user:
+          type: string
+        global:
+          type: boolean
+        application:
+          type: string
+        page:
+          type: string
+        name:
+          type: string
+        defaultTemplate:
+          type: boolean
+        apiVersion:
+          type: string
+        criteriaAsJson:
+          type: string
+        modificationCount:
+          format: int32
+          type: integer
+    SearchTemplateSearchCriteria:
+      type: object
+      properties:
+        user:
+          type: string
+        application:
+          type: string
+        page:
+          type: string
+        includeGlobal:
+          type: boolean
+    ProblemDetailResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        detail:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailParam'
+        invalidParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string

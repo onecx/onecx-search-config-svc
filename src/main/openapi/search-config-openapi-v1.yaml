@@ -1,0 +1,193 @@
+openapi: "3.0.3"
+info:
+  title: onecx-search-config-svc-v1
+  version: "1.0"
+servers:
+  - url: https://localhost:8080
+tags:
+  - name: SearchConfigV1
+    description: Search Config Service v1 RS API
+paths:
+  /searchTemplate/{templateId}:
+    put:
+      tags:
+        - SearchTemplate
+      summary: Updates the search template
+      description: Updates the search template
+      operationId: updateSearchTemplate
+      parameters:
+        - name: templateId
+          in: path
+          description: TemplateId for the search template to be updated
+          required: true
+          schema:
+            type: string
+      requestBody:
+        description: Updated values for the specified search template
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSearchTemplateRequest'
+        required: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UpdateSearchTemplateResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal Server Error
+    delete:
+      tags:
+        - SearchTemplate
+      summary: Deletes the search template
+      description: Deletes the search template
+      operationId: deleteSearchTemplate
+      parameters:
+        - name: templateId
+          in: path
+          description: TemplateId for the searchTemplate to be deleted
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad request
+        '500':
+          description: Internal Server Error
+
+  /searchTemplate/{page}:
+    get:
+      tags:
+        - SearchTemplate
+      summary: Gets the search templates for the specified page.
+      description: The search template for the page is returned.
+      operationId: getSearchTemplates
+      parameters:
+        - name: page
+          in: path
+          description: Value of the page queried
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSearchTemplatesResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal Server Error
+  /searchTemplate/:
+    post:
+      tags:
+        - SearchTemplate
+      summary: Creates a new search template
+      description: Creates a new search template
+      operationId: createSearchTemplate
+      requestBody:
+        description: Creates a new search template
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSearchTemplateRequest'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSearchTemplateResponse'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal Server Error
+components:
+  schemas:
+    SearchTemplate:
+      type: object
+      required:
+        - 'id'
+        - 'page'
+        - 'name'
+        - 'modificationCount'
+        - 'fieldListVersion'
+        - 'isReadonly'
+        - 'isAdvanced'
+        - 'columns'
+        - 'values'
+      properties:
+        id:
+          type: string
+        page:
+          type: string
+        name:
+          type: string
+        modificationCount:
+          type: integer
+        application:
+          type: string
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        isReadonly:
+          type: boolean
+          description: Defines whether this template can be changed in the UI
+        isAdvanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
+    GetSearchTemplatesResponse:
+      type: object
+      required:
+        - 'templates'
+      properties:
+        templates:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchTemplate'
+    CreateSearchTemplateRequest:
+      type: object
+      required:
+        - 'template'
+      properties:
+        template:
+          $ref: '#/components/schemas/SearchTemplate'
+    CreateSearchTemplateResponse:
+      type: object
+      required:
+        - 'template'
+      properties:
+        template:
+          $ref: '#/components/schemas/SearchTemplate'
+    UpdateSearchTemplateRequest:
+      type: object
+      required:
+        - 'template'
+      properties:
+        template:
+          $ref: '#/components/schemas/SearchTemplate'
+    UpdateSearchTemplateResponse:
+      type: object
+      required:
+        - 'template'
+      properties:
+        template:
+          $ref: '#/components/schemas/SearchTemplate'
+
