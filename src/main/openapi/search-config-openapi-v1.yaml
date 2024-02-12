@@ -38,8 +38,16 @@ paths:
                 $ref: '#/components/schemas/UpdateSearchConfigResponse'
         '400':
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
     delete:
       tags:
         - SearchConfigV1
@@ -58,9 +66,16 @@ paths:
           description: OK
         '400':
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
         '500':
           description: Internal Server Error
-
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /v1/searchConfig/{page}:
     get:
       tags:
@@ -84,8 +99,16 @@ paths:
                 $ref: '#/components/schemas/GetSearchConfigsResponse'
         '400':
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /v1/searchConfig/:
     post:
       tags:
@@ -109,8 +132,16 @@ paths:
                 $ref: '#/components/schemas/CreateSearchConfigResponse'
         '400':
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
         '500':
           description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /v1/internal/searchConfigs/search/criteria:
     post:
       tags:
