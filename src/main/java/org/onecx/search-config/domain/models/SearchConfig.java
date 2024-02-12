@@ -1,39 +1,45 @@
 package org.onecx.announcement.domain.models;
 
-import java.time.LocalDateTime;
-
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
 import org.tkit.quarkus.jpa.models.TraceableEntity;
 
-import gen.io.github.onecx.announcement.rs.internal.model.AnnouncementPriorityTypeDTO;
-import gen.io.github.onecx.announcement.rs.internal.model.AnnouncementStatusDTO;
-import gen.io.github.onecx.announcement.rs.internal.model.AnnouncementTypeDTO;
 import lombok.*;
 
 @Getter
 @Setter
 @Entity
-@Table(name = "announcement")
+@Table(name = "search_config")
 @SuppressWarnings("java:S2160")
-public class Announcement extends TraceableEntity {
+public class SearchConfig extends TraceableEntity {
 
-    private String title;
-    private String content;
-    @Enumerated(EnumType.STRING)
-    private AnnouncementTypeDTO type;
-    @Enumerated(EnumType.STRING)
-    private AnnouncementPriorityTypeDTO priority;
-    @Enumerated(EnumType.STRING)
-    private AnnouncementStatusDTO status;
-    @Column(name = "startDate")
-    private LocalDateTime startDate;
-    @Column(name = "endDate")
-    private LocalDateTime endDate;
-    @Column(name = "appId")
-    private String appId;
+    //    private String name;
+    //    private String page;
+    //    private String application;
+    //
+    //    private int fieldListVersion;
+    //
+    //    private String values;
+    //    @Column(name = "read_only")
+    //    private boolean isReadOnly;
+    //    @Column(name = "isAdvanced")
+    //    private boolean advanced;
+    //    @Column(name = "appId")
+    //    private String appId;
+    //
+    //    api_version      varchar(255),
+    //
+    //    application      varchar(255),
+    //
+    //    page             varchar(255),
+    //
+    //    name             varchar(255),
+    //    fieldListVersion int4,
+    //    values           text,
+    //    read_only        boolean,
+    //    advanced         boolean,
+    //    columns          text,
+    //    default_config   boolean,
+    //    global_config    boolean,
 }

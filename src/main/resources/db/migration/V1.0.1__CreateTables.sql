@@ -15,10 +15,12 @@ create table search_config
     read_only        boolean,
     advanced         boolean,
     columns          text,
-    default_config   boolean,
+    user   varchar(255),
     global_config    boolean,
     primary key (GUID)
 );
+
+
 
 alter table if exists search_config
     add constraint ck_config unique (name, page, application);

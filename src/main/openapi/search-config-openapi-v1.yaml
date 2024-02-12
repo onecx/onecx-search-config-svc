@@ -96,7 +96,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSearchConfigsResponse'
+                $ref: '#/components/schemas/SearchConfigPageResult'
         '400':
           description: Bad request
           content:
@@ -142,7 +142,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/internal/searchConfigs/search/criteria:
+  /v1/searchConfigs/search:
     post:
       tags:
         - SearchConfigV1
@@ -153,16 +153,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchConfigSearchCriteria'
+              $ref: '#/components/schemas/SearchConfigSearchRequest'
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SearchConfig'
+                $ref: '#/components/schemas/SearchConfigPageResult'
         "400":
           description: Bad request
           content:
@@ -217,15 +215,6 @@ components:
           type: object
           additionalProperties:
             type: string
-    GetSearchConfigsResponse:
-      type: object
-      required:
-        - 'configs'
-      properties:
-        configs:
-          type: array
-          items:
-            $ref: '#/components/schemas/SearchConfig'
     CreateSearchConfigRequest:
       type: object
       required:
@@ -254,7 +243,7 @@ components:
       properties:
         config:
           $ref: '#/components/schemas/SearchConfig'
-    SearchConfigSearchCriteria:
+    SearchConfigSearchRequest:
       type: object
       properties:
         name:
@@ -265,6 +254,10 @@ components:
           type: string
     DeleteSearchConfigRequest:
       type: object
+      required:
+        - 'name'
+        - 'page'
+        - 'application'
       properties:
         name:
           type: string
@@ -272,6 +265,26 @@ components:
           type: string
         application:
           type: string
+    SearchConfigPageResult:
+      description: PageResult  for Search configs
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchConfig'
     ProblemDetailResponse:
       type: object
       properties:

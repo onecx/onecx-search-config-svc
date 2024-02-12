@@ -8,25 +8,25 @@ tags:
   - name: SearchConfigInternal
     description: Execute Search Config CRUD operations
 paths:
-  /internal/searchTemplates:
+  /internal/searchConfigs:
     post:
       tags:
         - SearchConfigInternal
-      summary: Creates the search template.
-      description: Creates the search template.
-      operationId: createSearchTemplate
+      summary: Creates the search config.
+      description: Creates the search config.
+      operationId: createSearchConfig
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchTemplate'
+              $ref: '#/components/schemas/SearchConfig'
       responses:
         "201":
           description: Created
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchTemplate'
+                $ref: '#/components/schemas/SearchConfig'
         "400":
           description: Bad request
           content:
@@ -39,18 +39,18 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /internal/searchTemplates/search/criteria:
+  /internal/searchConfigs/search/criteria:
     post:
       tags:
         - SearchConfigInternal
-      summary: Finds search templates by criteria.
-      description: The search templates are found by search criteria.
+      summary: Finds search configs by criteria.
+      description: The search configs are found by search criteria.
       operationId: findBySearchCriteria
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchTemplateSearchCriteria'
+              $ref: '#/components/schemas/SearchConfigSearchCriteria'
       responses:
         "200":
           description: OK
@@ -59,7 +59,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/SearchTemplate'
+                  $ref: '#/components/schemas/SearchConfig'
         "400":
           description: Bad request
           content:
@@ -72,15 +72,15 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /internal/searchTemplates/{templateId}:
+  /internal/searchConfigs/{configId}:
     get:
       tags:
         - SearchConfigInternal
-      summary: Finds search templates by it's id.
-      description: Gets the search template by it's id.
-      operationId: getSearchTemplateById
+      summary: Finds search configs by it's id.
+      description: Gets the search config by it's id.
+      operationId: getSearchConfigById
       parameters:
-        - name: templateId
+        - name: configId
           in: path
           required: true
           schema:
@@ -91,7 +91,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchTemplate'
+                $ref: '#/components/schemas/SearchConfig'
         "500":
           description: Internal Server Error
           content:
@@ -101,11 +101,11 @@ paths:
     put:
       tags:
         - SearchConfigInternal
-      summary: Updates the search template.
-      description: Updates the search template.
-      operationId: updateSearchTemplate
+      summary: Updates the search config.
+      description: Updates the search config.
+      operationId: updateSearchConfig
       parameters:
-        - name: templateId
+        - name: configId
           in: path
           required: true
           schema:
@@ -114,14 +114,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchTemplate'
+              $ref: '#/components/schemas/SearchConfig'
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchTemplate'
+                $ref: '#/components/schemas/SearchConfig'
         "400":
           description: Bad request
           content:
@@ -137,11 +137,11 @@ paths:
     delete:
       tags:
         - SearchConfigInternal
-      summary: Deletes the search template.
-      description: Deletes the search template.
-      operationId: deleteSearchTemplate
+      summary: Deletes the search config.
+      description: Deletes the search config.
+      operationId: deleteSearchConfig
       parameters:
-        - name: templateId
+        - name: configId
           in: path
           required: true
           schema:
@@ -163,12 +163,9 @@ components:
       format: date-time
       type: string
       example: 2022-03-10T12:15:50-04:00
-    SearchTemplate:
+    SearchConfig:
       type: object
       properties:
-        version:
-          format: int32
-          type: integer
         creationDate:
           $ref: '#/components/schemas/OffsetDateTime'
         creationUser:
@@ -179,8 +176,6 @@ components:
           type: string
         id:
           type: string
-        user:
-          type: string
         global:
           type: boolean
         application:
@@ -189,16 +184,32 @@ components:
           type: string
         name:
           type: string
-        defaultTemplate:
+        defaultConfig:
           type: boolean
         apiVersion:
           type: string
-        criteriaAsJson:
-          type: string
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
         modificationCount:
           format: int32
           type: integer
-    SearchTemplateSearchCriteria:
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        isReadonly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        isAdvanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+
+    SearchConfigSearchCriteria:
       type: object
       properties:
         user:
