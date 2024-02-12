@@ -176,16 +176,12 @@ components:
           type: string
         id:
           type: string
-        global:
-          type: boolean
         application:
           type: string
         page:
           type: string
         name:
           type: string
-        defaultConfig:
-          type: boolean
         apiVersion:
           type: string
         columns:

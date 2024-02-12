@@ -54,13 +54,13 @@ paths:
       summary: Deletes the search config
       description: Deletes the search config
       operationId: deleteSearchConfig
-      requestBody:
-        description: Creates a new search config
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/DeleteSearchConfigRequest'
-        required: true
+      parameters:
+        - name: configId
+          in: path
+          description: ConfigId for the searchConfig to be deleted
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: OK

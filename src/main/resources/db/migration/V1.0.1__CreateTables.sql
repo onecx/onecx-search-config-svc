@@ -10,17 +10,17 @@ create table search_config
     application      varchar(255),
     page             varchar(255),
     name             varchar(255),
+    tenant_id        varchar(255),
     fieldListVersion int4,
     values           text,
     read_only        boolean,
     advanced         boolean,
     columns          text,
-    user   varchar(255),
-    global_config    boolean,
+    user             varchar(255),
     primary key (GUID)
 );
 
 
 
 alter table if exists search_config
-    add constraint ck_config unique (name, page, application);
+    add constraint ck_config unique (name, page, application, tenant_id);
