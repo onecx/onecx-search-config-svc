@@ -8,26 +8,26 @@ tags:
   - name: SearchConfigV1
     description: Search Config Service v1 RS API
 paths:
-  /searchTemplate/{templateId}:
+  /v1/searchConfig/{configId}:
     put:
       tags:
-        - SearchTemplate
-      summary: Updates the search template
-      description: Updates the search template
-      operationId: updateSearchTemplate
+        - SearchConfigV1
+      summary: Updates the search config
+      description: Updates the search config
+      operationId: updateSearchConfig
       parameters:
-        - name: templateId
+        - name: configId
           in: path
-          description: TemplateId for the search template to be updated
+          description: ConfigId for the search config to be updated
           required: true
           schema:
             type: string
       requestBody:
-        description: Updated values for the specified search template
+        description: Updated values for the specified search config
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UpdateSearchTemplateRequest'
+              $ref: '#/components/schemas/UpdateSearchConfigRequest'
         required: true
       responses:
         '200':
@@ -35,24 +35,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateSearchTemplateResponse'
+                $ref: '#/components/schemas/UpdateSearchConfigResponse'
         '400':
           description: Bad request
         '500':
           description: Internal Server Error
     delete:
       tags:
-        - SearchTemplate
-      summary: Deletes the search template
-      description: Deletes the search template
-      operationId: deleteSearchTemplate
-      parameters:
-        - name: templateId
-          in: path
-          description: TemplateId for the searchTemplate to be deleted
-          required: true
-          schema:
-            type: string
+        - SearchConfigV1
+      summary: Deletes the search config
+      description: Deletes the search config
+      operationId: deleteSearchConfig
+      requestBody:
+        description: Creates a new search config
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeleteSearchConfigRequest'
+        required: true
       responses:
         '200':
           description: OK
@@ -61,13 +61,13 @@ paths:
         '500':
           description: Internal Server Error
 
-  /searchTemplate/{page}:
+  /v1/searchConfig/{page}:
     get:
       tags:
-        - SearchTemplate
-      summary: Gets the search templates for the specified page.
-      description: The search template for the page is returned.
-      operationId: getSearchTemplates
+        - SearchConfigV1
+      summary: Gets the search configs for the specified page.
+      description: The search config for the page is returned.
+      operationId: getSearchConfigs
       parameters:
         - name: page
           in: path
@@ -81,24 +81,24 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSearchTemplatesResponse'
+                $ref: '#/components/schemas/GetSearchConfigsResponse'
         '400':
           description: Bad request
         '500':
           description: Internal Server Error
-  /searchTemplate/:
+  /v1/searchConfig/:
     post:
       tags:
-        - SearchTemplate
-      summary: Creates a new search template
-      description: Creates a new search template
-      operationId: createSearchTemplate
+        - SearchConfigV1
+      summary: Creates a new search config
+      description: Creates a new search config
+      operationId: createSearchConfig
       requestBody:
-        description: Creates a new search template
+        description: Creates a new search config
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/CreateSearchTemplateRequest'
+              $ref: '#/components/schemas/CreateSearchConfigRequest'
         required: true
       responses:
         '201':
@@ -106,14 +106,47 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/CreateSearchTemplateResponse'
+                $ref: '#/components/schemas/CreateSearchConfigResponse'
         '400':
           description: Bad request
         '500':
           description: Internal Server Error
+  /v1/internal/searchConfigs/search/criteria:
+    post:
+      tags:
+        - SearchConfigV1
+      summary: Finds search configs by criteria.
+      description: The search configs are found by search criteria.
+      operationId: findBySearchCriteria
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchConfigSearchCriteria'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchConfig'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        "500":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
 components:
   schemas:
-    SearchTemplate:
+    SearchConfig:
       type: object
       required:
         - 'id'
@@ -141,7 +174,7 @@ components:
           description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
         isReadonly:
           type: boolean
-          description: Defines whether this template can be changed in the UI
+          description: Defines whether this config can be changed in the UI
         isAdvanced:
           type: boolean
           description: Indicates whether the advanced mode should be displayed
@@ -153,41 +186,88 @@ components:
           type: object
           additionalProperties:
             type: string
-    GetSearchTemplatesResponse:
+    GetSearchConfigsResponse:
       type: object
       required:
-        - 'templates'
+        - 'configs'
       properties:
-        templates:
+        configs:
           type: array
           items:
-            $ref: '#/components/schemas/SearchTemplate'
-    CreateSearchTemplateRequest:
+            $ref: '#/components/schemas/SearchConfig'
+    CreateSearchConfigRequest:
       type: object
       required:
-        - 'template'
+        - 'config'
       properties:
-        template:
-          $ref: '#/components/schemas/SearchTemplate'
-    CreateSearchTemplateResponse:
+        config:
+          $ref: '#/components/schemas/SearchConfig'
+    CreateSearchConfigResponse:
       type: object
       required:
-        - 'template'
+        - 'config'
       properties:
-        template:
-          $ref: '#/components/schemas/SearchTemplate'
-    UpdateSearchTemplateRequest:
+        config:
+          $ref: '#/components/schemas/SearchConfig'
+    UpdateSearchConfigRequest:
       type: object
       required:
-        - 'template'
+        - 'config'
       properties:
-        template:
-          $ref: '#/components/schemas/SearchTemplate'
-    UpdateSearchTemplateResponse:
+        config:
+          $ref: '#/components/schemas/SearchConfig'
+    UpdateSearchConfigResponse:
       type: object
       required:
-        - 'template'
+        - 'config'
       properties:
-        template:
-          $ref: '#/components/schemas/SearchTemplate'
+        config:
+          $ref: '#/components/schemas/SearchConfig'
+    SearchConfigSearchCriteria:
+      type: object
+      properties:
+        name:
+          type: string
+        application:
+          type: string
+        page:
+          type: string
+    DeleteSearchConfigRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        page:
+          type: string
+        application:
+          type: string
+    ProblemDetailResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        detail:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailParam'
+        invalidParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
 

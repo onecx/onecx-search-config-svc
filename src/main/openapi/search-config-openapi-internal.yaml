@@ -8,7 +8,7 @@ tags:
   - name: SearchConfigInternal
     description: Execute Search Config CRUD operations
 paths:
-  /v1/searchTemplates:
+  /internal/searchTemplates:
     post:
       tags:
         - SearchConfigInternal
@@ -39,49 +39,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchTemplates/default/{application}/{page}/{user}:
-    get:
-      tags:
-        - SearchConfigInternal
-      summary: "Gets the default template for application, page and user."
-      description: "The default template for the application, page and user is returned."
-      operationId: getDefaultSearchTemplate
-      parameters:
-        - name: application
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: page
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: user
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        "200":
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SearchTemplate'
-        "400":
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchTemplates/search/criteria:
+  /internal/searchTemplates/search/criteria:
     post:
       tags:
         - SearchConfigInternal
@@ -114,7 +72,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchTemplates/{templateId}:
+  /internal/searchTemplates/{templateId}:
     get:
       tags:
         - SearchConfigInternal
