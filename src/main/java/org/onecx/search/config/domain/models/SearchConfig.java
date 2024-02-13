@@ -21,13 +21,14 @@ public class SearchConfig extends TraceableEntity {
     private int fieldListVersion;
     private String values;
     @Column(name = "read_only")
-    private boolean isReadOnly;
+    private boolean readOnly;
     @Column(name = "advanced")
-    private boolean isAdvanced;
+    private boolean advanced;
     @Column(name = "columns")
     private String columns;
     @Column(name = "api_version")
     private String apiVersion;
-    private String tenant_id;
+    @Column(name = "tenant_id")
+    private String tenantId;
 
 }

@@ -20,7 +20,5 @@ create table search_config
     primary key (GUID)
 );
 
-
-
 alter table if exists search_config
     add constraint ck_config unique (name, page, application, tenant_id);
