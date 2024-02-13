@@ -252,19 +252,6 @@ components:
           type: string
         page:
           type: string
-    DeleteSearchConfigRequest:
-      type: object
-      required:
-        - 'name'
-        - 'page'
-        - 'application'
-      properties:
-        name:
-          type: string
-        page:
-          type: string
-        application:
-          type: string
     SearchConfigPageResult:
       description: PageResult  for Search configs
       type: object

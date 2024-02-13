@@ -39,7 +39,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /internal/searchConfigs/search/criteria:
+  /internal/searchConfigs/search:
     post:
       tags:
         - SearchConfigInternal
@@ -50,16 +50,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchConfigSearchCriteria'
+              $ref: '#/components/schemas/SearchConfigSearchRequest'
       responses:
         "200":
           description: OK
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/SearchConfig'
+                $ref: '#/components/schemas/SearchConfigPageResult'
         "400":
           description: Bad request
           content:
@@ -204,18 +202,35 @@ components:
         isAdvanced:
           type: boolean
           description: Indicates whether the advanced mode should be displayed
-
-    SearchConfigSearchCriteria:
+    SearchConfigSearchRequest:
       type: object
       properties:
-        user:
+        name:
           type: string
         application:
           type: string
         page:
           type: string
-        includeGlobal:
-          type: boolean
+    SearchConfigPageResult:
+      description: PageResult  for Search configs
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchConfig'
     ProblemDetailResponse:
       type: object
       properties:
