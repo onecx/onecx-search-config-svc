@@ -21,7 +21,6 @@ import org.tkit.quarkus.jpa.daos.PageResult;
 import org.tkit.quarkus.jpa.exceptions.DAOException;
 import org.tkit.quarkus.jpa.models.AbstractTraceableEntity_;
 
-import gen.io.github.onecx.search.config.v1.model.SearchConfigSearchRequestDTOV1;
 import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
@@ -53,7 +52,7 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
     }
 
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = DAOException.class)
-    public PageResult<SearchConfig> findBySearchCriteria(SearchConfigSearchRequestDTOV1 searchCriteria) {
+    public PageResult<SearchConfig> findBySearchCriteria(SearchConfig searchCriteria) {
 
         try {
             CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();

@@ -3,6 +3,7 @@ package org.onecx.search.config.domain.models;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import jakarta.persistence.UniqueConstraint;
 
 import org.tkit.quarkus.jpa.models.TraceableEntity;
 
@@ -11,7 +12,9 @@ import lombok.*;
 @Getter
 @Setter
 @Entity
-@Table(name = "search_config")
+@Table(name = "search_config", uniqueConstraints = {
+        @UniqueConstraint(name = "search_config", columnNames = { "name", "page", "application", "tenant_id" })
+})
 @SuppressWarnings("java:S2160")
 public class SearchConfig extends TraceableEntity {
 

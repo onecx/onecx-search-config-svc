@@ -19,7 +19,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchConfig'
+              $ref: '#/components/schemas/CreateSearchConfigRequest'
       responses:
         "201":
           description: Created
@@ -112,7 +112,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SearchConfig'
+              $ref: '#/components/schemas/UpdateSearchConfigRequest'
       responses:
         "200":
           description: OK
@@ -196,12 +196,19 @@ components:
         fieldListVersion:
           type: integer
           description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
-        isReadonly:
+        isReadOnly:
           type: boolean
           description: Defines whether this config can be changed in the UI
         isAdvanced:
           type: boolean
           description: Indicates whether the advanced mode should be displayed
+    CreateSearchConfigRequest:
+      type: object
+      required:
+        - 'config'
+      properties:
+        config:
+          $ref: '#/components/schemas/SearchConfig'
     SearchConfigSearchRequest:
       type: object
       properties:
@@ -211,6 +218,13 @@ components:
           type: string
         page:
           type: string
+    UpdateSearchConfigRequest:
+      type: object
+      required:
+        - 'config'
+      properties:
+        config:
+          $ref: '#/components/schemas/SearchConfig'
     SearchConfigPageResult:
       description: PageResult  for Search configs
       type: object

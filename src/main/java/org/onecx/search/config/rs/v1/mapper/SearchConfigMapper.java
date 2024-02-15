@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gen.io.github.onecx.search.config.v1.model.ProblemDetailResponseDTOV1;
 import gen.io.github.onecx.search.config.v1.model.SearchConfigDTOV1;
 import gen.io.github.onecx.search.config.v1.model.SearchConfigPageResultDTOV1;
+import gen.io.github.onecx.search.config.v1.model.SearchConfigSearchRequestDTOV1;
 
 @Mapper(uses = OffsetDateTimeMapper.class)
 public abstract class SearchConfigMapper {
@@ -90,4 +91,21 @@ public abstract class SearchConfigMapper {
 
     @Mapping(target = "removeStreamItem", ignore = true)
     public abstract SearchConfigPageResultDTOV1 mapToPageResult(PageResult<SearchConfig> results);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "modificationCount", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "modificationDate", ignore = true)
+    @Mapping(target = "creationUser", ignore = true)
+    @Mapping(target = "modificationUser", ignore = true)
+    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "controlTraceabilityManual", ignore = true)
+    @Mapping(target = "persisted", ignore = true)
+    @Mapping(target = "apiVersion", ignore = true)
+    @Mapping(target = "readOnly", ignore = true)
+    @Mapping(target = "advanced", ignore = true)
+    @Mapping(target = "fieldListVersion", ignore = true)
+    @Mapping(target = "values", ignore = true)
+    @Mapping(target = "columns", ignore = true)
+    public abstract SearchConfig map(SearchConfigSearchRequestDTOV1 configSearchRequestDTO);
 }

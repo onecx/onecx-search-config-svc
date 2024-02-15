@@ -1,4 +1,4 @@
-package org.onecx.search.config.rs.v1.mapper;
+package org.onecx.search.config.rs.internal.mapper;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,9 +14,10 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gen.io.github.onecx.search.config.v1.model.ProblemDetailResponseDTOV1;
-import gen.io.github.onecx.search.config.v1.model.SearchConfigDTOV1;
-import gen.io.github.onecx.search.config.v1.model.SearchConfigPageResultDTOV1;
+import gen.io.github.onecx.search.config.rs.internal.model.ProblemDetailResponseDTO;
+import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigDTO;
+import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigPageResultDTO;
+import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigSearchRequestDTO;
 
 @Mapper(uses = OffsetDateTimeMapper.class)
 public abstract class SearchConfigMapper {
@@ -33,7 +34,7 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "apiVersion", ignore = true)
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
-    public abstract SearchConfig create(SearchConfigDTOV1 dto);
+    public abstract SearchConfig create(SearchConfigDTO dto);
 
     public String map(Map<String, String> values) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -45,7 +46,7 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "isAdvanced", source = "advanced")
     @Mapping(target = "removeColumnsItem", source = "advanced")
     @Mapping(target = "removeValuesItem", source = "advanced")
-    public abstract SearchConfigDTOV1 map(SearchConfig searchConfig);
+    public abstract SearchConfigDTO map(SearchConfig searchConfig);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "modificationCount", ignore = true)
@@ -59,7 +60,7 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "apiVersion", ignore = true)
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
-    public abstract SearchConfig update(@MappingTarget SearchConfig searchConfig, SearchConfigDTOV1 dto);
+    public abstract SearchConfig update(@MappingTarget SearchConfig searchConfig, SearchConfigDTO dto);
 
     public String map(List<String> value) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -86,8 +87,25 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "removeParamsItem", ignore = true)
     @Mapping(target = "invalidParams", ignore = true)
     @Mapping(target = "removeInvalidParamsItem", ignore = true)
-    public abstract ProblemDetailResponseDTOV1 exception(String errorCode, String detail);
+    public abstract ProblemDetailResponseDTO exception(String errorCode, String detail);
 
     @Mapping(target = "removeStreamItem", ignore = true)
-    public abstract SearchConfigPageResultDTOV1 mapToPageResult(PageResult<SearchConfig> results);
+    public abstract SearchConfigPageResultDTO mapToPageResult(PageResult<SearchConfig> results);
+
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "modificationCount", ignore = true)
+    @Mapping(target = "creationDate", ignore = true)
+    @Mapping(target = "modificationDate", ignore = true)
+    @Mapping(target = "creationUser", ignore = true)
+    @Mapping(target = "modificationUser", ignore = true)
+    @Mapping(target = "tenantId", ignore = true)
+    @Mapping(target = "controlTraceabilityManual", ignore = true)
+    @Mapping(target = "persisted", ignore = true)
+    @Mapping(target = "apiVersion", ignore = true)
+    @Mapping(target = "readOnly", ignore = true)
+    @Mapping(target = "advanced", ignore = true)
+    @Mapping(target = "fieldListVersion", ignore = true)
+    @Mapping(target = "values", ignore = true)
+    @Mapping(target = "columns", ignore = true)
+    public abstract SearchConfig map(SearchConfigSearchRequestDTO configSearchRequestDTO);
 }
