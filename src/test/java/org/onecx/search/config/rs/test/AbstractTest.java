@@ -1,4 +1,4 @@
-package org.onecx.announcement.rs.test;
+package org.onecx.search.config.rs.test;
 
 import static com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS;
 import static io.restassured.RestAssured.config;
