@@ -218,6 +218,16 @@ components:
           type: string
         page:
           type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
     UpdateSearchConfigRequest:
       type: object
       required:

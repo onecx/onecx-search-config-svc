@@ -96,7 +96,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchConfigPageResult'
+                $ref: '#/components/schemas/GetSearchTemplatesResponse'
         '400':
           description: Bad request
           content:
@@ -177,16 +177,6 @@ components:
   schemas:
     SearchConfig:
       type: object
-      required:
-        - 'id'
-        - 'page'
-        - 'name'
-        - 'modificationCount'
-        - 'fieldListVersion'
-        - 'isReadonly'
-        - 'isAdvanced'
-        - 'columns'
-        - 'values'
       properties:
         id:
           type: string
@@ -218,24 +208,99 @@ components:
     CreateSearchConfigRequest:
       type: object
       required:
-        - 'config'
+        - 'page'
+        - 'name'
+        - 'fieldListVersion'
+        - 'isReadonly'
+        - 'isAdvanced'
+        - 'columns'
+        - 'values'
       properties:
-        config:
-          $ref: '#/components/schemas/SearchConfig'
+        page:
+          type: string
+        name:
+          type: string
+        application:
+          type: string
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        isReadOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        isAdvanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
     CreateSearchConfigResponse:
       type: object
       required:
-        - 'config'
+        - 'page'
+        - 'name'
+        - 'fieldListVersion'
+        - 'isReadonly'
+        - 'isAdvanced'
+        - 'columns'
+        - 'values'
       properties:
-        config:
-          $ref: '#/components/schemas/SearchConfig'
+        page:
+          type: string
+        name:
+          type: string
+        application:
+          type: string
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        isReadOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        isAdvanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
     UpdateSearchConfigRequest:
       type: object
-      required:
-        - 'config'
       properties:
-        config:
-          $ref: '#/components/schemas/SearchConfig'
+        page:
+          type: string
+        name:
+          type: string
+        application:
+          type: string
+        modificationCount:
+          type: integer
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        isReadOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        isAdvanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
     UpdateSearchConfigResponse:
       type: object
       required:
@@ -243,6 +308,13 @@ components:
       properties:
         config:
           $ref: '#/components/schemas/SearchConfig'
+    GetSearchTemplatesResponse:
+      type: object
+      properties:
+        configs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchConfig'
     SearchConfigSearchRequest:
       type: object
       properties:
@@ -252,6 +324,16 @@ components:
           type: string
         page:
           type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
     SearchConfigPageResult:
       description: PageResult  for Search configs
       type: object

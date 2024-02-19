@@ -18,6 +18,7 @@ import gen.io.github.onecx.search.config.rs.internal.model.ProblemDetailResponse
 import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigDTO;
 import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigPageResultDTO;
 import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigSearchRequestDTO;
+import gen.io.github.onecx.search.config.v1.model.SearchConfigSearchRequestDTOV1;
 
 @Mapper(uses = OffsetDateTimeMapper.class)
 public abstract class SearchConfigMapper {
@@ -32,6 +33,7 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "controlTraceabilityManual", ignore = true)
     @Mapping(target = "persisted", ignore = true)
     @Mapping(target = "apiVersion", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
     public abstract SearchConfig create(SearchConfigDTO dto);
@@ -58,6 +60,7 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "controlTraceabilityManual", ignore = true)
     @Mapping(target = "persisted", ignore = true)
     @Mapping(target = "apiVersion", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
     public abstract SearchConfig update(@MappingTarget SearchConfig searchConfig, SearchConfigDTO dto);
@@ -107,5 +110,8 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "fieldListVersion", ignore = true)
     @Mapping(target = "values", ignore = true)
     @Mapping(target = "columns", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     public abstract SearchConfig map(SearchConfigSearchRequestDTO configSearchRequestDTO);
+
+    public abstract SearchConfigSearchRequestDTOV1 mapToV1(SearchConfigSearchRequestDTO configSearchRequestDTO);
 }

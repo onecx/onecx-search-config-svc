@@ -4,7 +4,6 @@ import static org.jboss.resteasy.reactive.RestResponse.StatusCode.BAD_REQUEST;
 import static org.jboss.resteasy.reactive.RestResponse.StatusCode.NOT_FOUND;
 
 import jakarta.inject.Inject;
-import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
@@ -41,7 +40,7 @@ public class SearchConfigControllerInternal implements SearchConfigInternalApi {
     UriInfo uriInfo;
 
     @Override
-    public Response createSearchConfig(@NotNull CreateSearchConfigRequestDTO createSearchConfigRequestDTO) {
+    public Response createSearchConfig(CreateSearchConfigRequestDTO createSearchConfigRequestDTO) {
         var searchConfig = searchConfigMapper.create(createSearchConfigRequestDTO.getConfig());
         var responseSearchConfig = searchConfigDAO.create(searchConfig);
         return Response
@@ -70,7 +69,7 @@ public class SearchConfigControllerInternal implements SearchConfigInternalApi {
 
     @Override
     public Response findBySearchCriteria(SearchConfigSearchRequestDTO searchConfigSearchRequestDTO) {
-        var results = searchConfigDAO.findBySearchCriteria(searchConfigMapper.map(searchConfigSearchRequestDTO));
+        var results = searchConfigDAO.findBySearchCriteria(searchConfigMapper.mapToV1(searchConfigSearchRequestDTO));
         if (results == null) {
             return Response.status(NOT_FOUND).build();
         }

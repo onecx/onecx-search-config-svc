@@ -33,5 +33,7 @@ public class SearchConfig extends TraceableEntity {
     private String apiVersion;
     @Column(name = "tenant_id")
     private String tenantId;
+    @Column(name = "user_id")
+    private String userId;
 
 }

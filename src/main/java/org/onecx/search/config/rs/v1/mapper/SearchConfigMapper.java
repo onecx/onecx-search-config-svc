@@ -14,10 +14,7 @@ import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gen.io.github.onecx.search.config.v1.model.ProblemDetailResponseDTOV1;
-import gen.io.github.onecx.search.config.v1.model.SearchConfigDTOV1;
-import gen.io.github.onecx.search.config.v1.model.SearchConfigPageResultDTOV1;
-import gen.io.github.onecx.search.config.v1.model.SearchConfigSearchRequestDTOV1;
+import gen.io.github.onecx.search.config.v1.model.*;
 
 @Mapper(uses = OffsetDateTimeMapper.class)
 public abstract class SearchConfigMapper {
@@ -34,7 +31,8 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "apiVersion", ignore = true)
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
-    public abstract SearchConfig create(SearchConfigDTOV1 dto);
+    @Mapping(target = "userId", ignore = true)
+    public abstract SearchConfig create(CreateSearchConfigRequestDTOV1 dto);
 
     public String map(Map<String, String> values) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -60,7 +58,8 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "apiVersion", ignore = true)
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
-    public abstract SearchConfig update(@MappingTarget SearchConfig searchConfig, SearchConfigDTOV1 dto);
+    @Mapping(target = "userId", ignore = true)
+    public abstract SearchConfig update(@MappingTarget SearchConfig searchConfig, UpdateSearchConfigRequestDTOV1 dto);
 
     public String map(List<String> value) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
@@ -107,5 +106,8 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "fieldListVersion", ignore = true)
     @Mapping(target = "values", ignore = true)
     @Mapping(target = "columns", ignore = true)
+    @Mapping(target = "userId", ignore = true)
     public abstract SearchConfig map(SearchConfigSearchRequestDTOV1 configSearchRequestDTO);
+
+    public abstract List<SearchConfigDTOV1> mapList(List<SearchConfig> searchConfigs);
 }
