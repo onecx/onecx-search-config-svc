@@ -142,7 +142,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchConfigs/search:
+  /v1/searchConfig/search:
     post:
       tags:
         - SearchConfigV1
