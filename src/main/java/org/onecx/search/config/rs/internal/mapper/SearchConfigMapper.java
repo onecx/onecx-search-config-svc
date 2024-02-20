@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.onecx.search.config.domain.models.SearchConfig;
-import org.tkit.quarkus.jpa.daos.PageResult;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,7 +15,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import gen.io.github.onecx.search.config.rs.internal.model.ProblemDetailResponseDTO;
 import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigDTO;
-import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigPageResultDTO;
 import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigSearchRequestDTO;
 import gen.io.github.onecx.search.config.v1.model.SearchConfigSearchRequestDTOV1;
 
@@ -51,7 +49,6 @@ public abstract class SearchConfigMapper {
     public abstract SearchConfigDTO map(SearchConfig searchConfig);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "modificationCount", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modificationDate", ignore = true)
     @Mapping(target = "creationUser", ignore = true)
@@ -92,9 +89,6 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "removeInvalidParamsItem", ignore = true)
     public abstract ProblemDetailResponseDTO exception(String errorCode, String detail);
 
-    @Mapping(target = "removeStreamItem", ignore = true)
-    public abstract SearchConfigPageResultDTO mapToPageResult(PageResult<SearchConfig> results);
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "modificationCount", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
@@ -114,4 +108,6 @@ public abstract class SearchConfigMapper {
     public abstract SearchConfig map(SearchConfigSearchRequestDTO configSearchRequestDTO);
 
     public abstract SearchConfigSearchRequestDTOV1 mapToV1(SearchConfigSearchRequestDTO configSearchRequestDTO);
+
+    public abstract List<SearchConfigDTO> mapList(List<SearchConfig> searchConfigs);
 }

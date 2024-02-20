@@ -69,8 +69,9 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
         if (results == null) {
             return Response.status(NOT_FOUND).build();
         }
-        SearchConfigPageResultDTOV1 searchConfigPageResultDTOV1 = searchConfigMapper.mapToPageResult(results);
-        return Response.ok().entity(searchConfigPageResultDTOV1).build();
+        GetSearchTemplatesResponseDTOV1 getSearchTemplatesResponse = new GetSearchTemplatesResponseDTOV1();
+        getSearchTemplatesResponse.setConfigs(searchConfigMapper.mapList(results));
+        return Response.ok().entity(getSearchTemplatesResponse).build();
     }
 
     @Override

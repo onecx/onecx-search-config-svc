@@ -8,7 +8,7 @@ tags:
   - name: SearchConfigInternal
     description: Execute Search Config CRUD operations
 paths:
-  /internal/searchConfigs:
+  /internal/searchConfig:
     post:
       tags:
         - SearchConfigInternal
@@ -39,7 +39,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /internal/searchConfigs/search:
+  /internal/searchConfig/search:
     post:
       tags:
         - SearchConfigInternal
@@ -57,7 +57,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchConfigPageResult'
+                $ref: '#/components/schemas/GetSearchTemplatesResponse'
         "400":
           description: Bad request
           content:
@@ -70,7 +70,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /internal/searchConfigs/{configId}:
+  /internal/searchConfig/{configId}:
     get:
       tags:
         - SearchConfigInternal
@@ -218,16 +218,6 @@ components:
           type: string
         page:
           type: string
-        pageNumber:
-          format: int32
-          description: The number of page.
-          default: 0
-          type: integer
-        pageSize:
-          format: int32
-          description: The size of page
-          default: 100
-          type: integer
     UpdateSearchConfigRequest:
       type: object
       required:
@@ -235,23 +225,10 @@ components:
       properties:
         config:
           $ref: '#/components/schemas/SearchConfig'
-    SearchConfigPageResult:
-      description: PageResult  for Search configs
+    GetSearchTemplatesResponse:
       type: object
       properties:
-        totalElements:
-          format: int64
-          type: integer
-        number:
-          format: int32
-          type: integer
-        size:
-          format: int32
-          type: integer
-        totalPages:
-          format: int64
-          type: integer
-        stream:
+        configs:
           type: array
           items:
             $ref: '#/components/schemas/SearchConfig'

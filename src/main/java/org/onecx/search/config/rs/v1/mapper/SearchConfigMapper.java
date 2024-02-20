@@ -8,7 +8,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.onecx.search.config.domain.models.SearchConfig;
-import org.tkit.quarkus.jpa.daos.PageResult;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -87,9 +86,6 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "invalidParams", ignore = true)
     @Mapping(target = "removeInvalidParamsItem", ignore = true)
     public abstract ProblemDetailResponseDTOV1 exception(String errorCode, String detail);
-
-    @Mapping(target = "removeStreamItem", ignore = true)
-    public abstract SearchConfigPageResultDTOV1 mapToPageResult(PageResult<SearchConfig> results);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "modificationCount", ignore = true)

@@ -17,10 +17,7 @@ import jakarta.transaction.Transactional;
 import org.onecx.search.config.domain.models.SearchConfig;
 import org.onecx.search.config.domain.models.SearchConfig_;
 import org.tkit.quarkus.jpa.daos.AbstractDAO;
-import org.tkit.quarkus.jpa.daos.Page;
-import org.tkit.quarkus.jpa.daos.PageResult;
 import org.tkit.quarkus.jpa.exceptions.DAOException;
-import org.tkit.quarkus.jpa.models.AbstractTraceableEntity_;
 
 import gen.io.github.onecx.search.config.v1.model.SearchConfigSearchRequestDTOV1;
 import lombok.extern.slf4j.Slf4j;
@@ -53,7 +50,7 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
     }
 
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = DAOException.class)
-    public PageResult<SearchConfig> findBySearchCriteria(SearchConfigSearchRequestDTOV1 searchCriteria) {
+    public List<SearchConfig> findBySearchCriteria(SearchConfigSearchRequestDTOV1 searchCriteria) {
 
         try {
             CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
@@ -78,11 +75,9 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
             }
 
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
+            criteriaQuery.distinct(true);
 
-            criteriaQuery.orderBy(criteriaBuilder.desc(searchConfigRoot.get(AbstractTraceableEntity_.CREATION_DATE)));
-            return createPageQuery(criteriaQuery, Page.of(searchCriteria.getPageNumber(), searchCriteria.getPageSize()))
-                    .getPageResult();
-
+            return getEntityManager().createQuery(criteriaQuery).getResultList();
         } catch (Exception exception) {
             throw new DAOException(FIND_SEARCH_CONFIGS_BY_CRITERIA_FAILED, exception);
         }
