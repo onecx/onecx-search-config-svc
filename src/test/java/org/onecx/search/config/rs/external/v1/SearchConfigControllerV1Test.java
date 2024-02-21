@@ -1,720 +1,390 @@
 package org.onecx.search.config.rs.external.v1;
 
+import gen.io.github.onecx.search.config.v1.model.*;
 import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.response.Response;
 import jakarta.ws.rs.core.MediaType;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.onecx.search.config.rs.test.AbstractTest;
-
 import org.tkit.quarkus.test.WithDBData;
 
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.restassured.RestAssured.given;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
 @QuarkusTest
-public class SearchTemplateRestControllerTest extends AbstractTest {
+class SearchConfigControllerV1Test extends AbstractTest {
 
+    String SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT = "/v1/searchConfig";
+    String SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT = "/internal/searchConfig";
 
+    private Map<String, String> setupValues() {
+        Map<String, String> values = new HashMap<>();
+        values.put("name", "name");
+        values.put("surname", "surname");
+        values.put("address", "address");
+        return values;
+    }
+
+    private List<String> setupColumns() {
+        List<String> columns = new ArrayList<>();
+        columns.add("name");
+        columns.add("surname");
+        columns.add("address");
+        return columns;
+    }
 
     @Test
     @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldGetSearchTemplateById() {
-
+    void shouldGetSearchConfigsByPage() {
 
         // given
-        String templateId = "0bdd8a31-185a-4e13-9c4c-780ed1beec07";
+        String page = "page1";
 
-        String expectedApplication = "support-tool-ui";
-        String expectedUser = "89e93c2c-8fd5-48a0-81b2-8b988a7cb5cc";
-        String expectedCriteria = "{\"name\": \"name\",\"id\": \"id\",\"responsible\": \"responsible\"}";
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        var response = given()
                 .when()
-                .get("/v1/searchTemplates/" + templateId);
+                .contentType(MediaType.APPLICATION_JSON)
+                .get(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + page)
+                .prettyPeek();
 
+        GetSearchConfigResponseDTOV1 getSearchConfigResponseDTO = response.as(GetSearchConfigResponseDTOV1.class);
         // then
         response.then().statusCode(200);
-
-        SearchTemplateDTOv1 searchTemplateDTOv1 = response.as(SearchTemplateDTOv1.class);
-
-        assertEquals(templateId, searchTemplateDTOv1.getId());
-        assertEquals(expectedApplication, searchTemplateDTOv1.getApplication());
-        assertEquals(expectedUser, searchTemplateDTOv1.getUser());
-        assertEquals(expectedCriteria, searchTemplateDTOv1.getCriteriaAsJson());
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldNotGetSearchTemplateByIdNotExists() {
-        // given
-        String templateId = "NotExists";
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .get("/v1/searchTemplates/" + templateId);
-
-        // then
-        response.then().statusCode(200);
-
-        assertTrue(response.getBody().asString().isEmpty());
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldCreateSearchTemplate() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldCreateSearchConfig() {
         // given
         String application = "support-tool-ui";
         String name = "criteria-name";
         String page = "criteria-page";
-        String user = "89e93c2c-8fd5-48a0-81b2-8b988a7cb5cc";
-        String criteria = "{\"name\": \"name\",\"id\": \"id\",\"responsible\": \"responsible\"}";
 
-        SearchTemplateDTOv1 newSearchTemplateDTOv1 = new SearchTemplateDTOv1();
-        newSearchTemplateDTOv1.setApplication(application);
-        newSearchTemplateDTOv1.setName(name);
-        newSearchTemplateDTOv1.setPage(page);
-        newSearchTemplateDTOv1.setUser(user);
-        newSearchTemplateDTOv1.setCriteriaAsJson(criteria);
+        CreateSearchConfigRequestDTOV1 newSearchConfig = new CreateSearchConfigRequestDTOV1();
+        newSearchConfig.setApplication(application);
+        newSearchConfig.setName(name);
+        newSearchConfig.setPage(page);
+        newSearchConfig.values(setupValues());
+        newSearchConfig.setColumns(setupColumns());
+        newSearchConfig.setFieldListVersion(1);
+        newSearchConfig.setIsReadOnly(true);
+        newSearchConfig.setIsAdvanced(false);
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .body(newSearchTemplateDTOv1)
-                .header("Authorization", "bearer " + defaultValidToken)
-                .post("/v1/searchTemplates");
+                .body(newSearchConfig)
+                .post(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT);
 
         // then
         response.then().statusCode(201);
 
-        SearchTemplateDTOv1 searchTemplateDTOv1 = response.as(SearchTemplateDTOv1.class);
+        SearchConfigDTOV1 searchConfigDTOV1 = response.as(SearchConfigDTOV1.class);
 
-        assertNotNull(searchTemplateDTOv1.getId());
-        assertEquals(newSearchTemplateDTOv1.getApplication(), searchTemplateDTOv1.getApplication());
-        assertEquals(newSearchTemplateDTOv1.getName(), searchTemplateDTOv1.getName());
-        assertEquals(newSearchTemplateDTOv1.getUser(), searchTemplateDTOv1.getUser());
-        assertEquals(newSearchTemplateDTOv1.getPage(), searchTemplateDTOv1.getPage());
-        assertEquals(newSearchTemplateDTOv1.getCriteriaAsJson(), searchTemplateDTOv1.getCriteriaAsJson());
+        assertThat(searchConfigDTOV1.getId()).isNotNull();
+        assertThat(newSearchConfig.getApplication()).isEqualTo(searchConfigDTOV1.getApplication());
+        assertThat(newSearchConfig.getName()).isEqualTo(searchConfigDTOV1.getName());
+        assertThat(newSearchConfig.getPage()).isEqualTo(searchConfigDTOV1.getPage());
+        assertThat(newSearchConfig.getColumns()).isEqualTo(searchConfigDTOV1.getColumns());
+        assertThat(newSearchConfig.getValues()).isEqualTo(searchConfigDTOV1.getValues());
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldCreateDefaultSearchTemplate() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldNotCreateSearchConfig() {
         // given
-        String application = "support-tool-ui";
-        String name = "criteria-name";
-        String page = "page1";
-        String user = "89e93c2c-8fd5-48a0-81b2-8b988a7cb5cc";
-        String criteria = "{\"name\": \"name\",\"id\": \"id\",\"responsible\": \"responsible\"}";
-
-        SearchTemplateDTOv1 newSearchTemplateDTOv1 = new SearchTemplateDTOv1();
-        newSearchTemplateDTOv1.setApplication(application);
-        newSearchTemplateDTOv1.setName(name);
-        newSearchTemplateDTOv1.setPage(page);
-        newSearchTemplateDTOv1.setUser(user);
-        newSearchTemplateDTOv1.setCriteriaAsJson(criteria);
-        newSearchTemplateDTOv1.setDefaultTemplate(true);
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .body(newSearchTemplateDTOv1)
-                .header("Authorization", "bearer " + defaultValidToken)
-                .post("/v1/searchTemplates");
-
-        // then
-        response.then().statusCode(201);
-
-        SearchTemplateDTOv1 searchTemplateDTOv1 = response.as(SearchTemplateDTOv1.class);
-
-        assertNotNull(searchTemplateDTOv1.getId());
-        assertEquals(newSearchTemplateDTOv1.getApplication(), searchTemplateDTOv1.getApplication());
-        assertEquals(newSearchTemplateDTOv1.getName(), searchTemplateDTOv1.getName());
-        assertEquals(newSearchTemplateDTOv1.getUser(), searchTemplateDTOv1.getUser());
-        assertEquals(newSearchTemplateDTOv1.getPage(), searchTemplateDTOv1.getPage());
-        assertEquals(newSearchTemplateDTOv1.getCriteriaAsJson(), searchTemplateDTOv1.getCriteriaAsJson());
-
-        // check old default
-        Response checkResponse =
-                given().contentType(MediaType.APPLICATION_JSON)
-                        .when()
-                        .header("Authorization", "bearer " + defaultValidToken)
-                        .get("/v1/searchTemplates/" + "0bdd8a31-185a-4e13-9c4c-780ed1beec07");
-
-        checkResponse.then().statusCode(200);
-
-        SearchTemplateDTOv1 oldDefaultSearchTemplateDTOv1 = checkResponse.as(SearchTemplateDTOv1.class);
-
-        assertFalse(oldDefaultSearchTemplateDTOv1.isDefaultTemplate());
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldNotCreateSearchTemplateNullTemplate() {
-        // given
-        String expectedErrorCode = "BAD_REQUEST";
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .post("/v1/searchTemplates");
+                .post(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT);
 
         // then
         response.then().statusCode(400);
-
-        RestExceptionDTO restExceptionDTO = response.as(RestExceptionDTO.class);
-
-        assertEquals(expectedErrorCode, restExceptionDTO.getErrorCode());
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldUpdateSearchTemplateDefaultAsNotDefault() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldUpdateModificationCount() {
         // given
-        String searchTemplateId = "0bdd8a31-185a-4e13-9c4c-780ed1beec07";
+        String searchConfigId = "1";
 
         String application = "support-tool-ui";
         String name = "criteria-name";
         String page = "criteria-page";
-        String user = "89e93c2c-8fd5-48a0-81b2-8b988a7cb5cc";
-        String criteria = "{\"name\": \"name\",\"id\": \"id\",\"responsible\": \"responsible\"}";
 
-        SearchTemplateDTOv1 newSearchTemplateDTOv1 = new SearchTemplateDTOv1();
-        newSearchTemplateDTOv1.setApplication(application);
-        newSearchTemplateDTOv1.setName(name);
-        newSearchTemplateDTOv1.setPage(page);
-        newSearchTemplateDTOv1.setUser(user);
-        newSearchTemplateDTOv1.setDefaultTemplate(false);
-        newSearchTemplateDTOv1.setCriteriaAsJson(criteria);
+        UpdateSearchConfigRequestDTOV1 updateRequestBody = new UpdateSearchConfigRequestDTOV1();
+        updateRequestBody.setApplication(application);
+        updateRequestBody.setName(name);
+        updateRequestBody.setPage(page);
+        updateRequestBody.setModificationCount(1);
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .body(newSearchTemplateDTOv1)
-                .header("Authorization", "bearer " + defaultValidToken)
-                .put("/v1/searchTemplates/" + searchTemplateId);
+                .body(updateRequestBody)
+                .put(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + searchConfigId);
 
         // then
         response.then().statusCode(200);
 
-        SearchTemplateDTOv1 searchTemplateDTOv1 = response.as(SearchTemplateDTOv1.class);
-
-        assertEquals(searchTemplateId, searchTemplateDTOv1.getId());
-        assertEquals(newSearchTemplateDTOv1.getApplication(), searchTemplateDTOv1.getApplication());
-        assertEquals(newSearchTemplateDTOv1.getName(), searchTemplateDTOv1.getName());
-        assertEquals(false, searchTemplateDTOv1.isDefaultTemplate());
-        assertEquals(newSearchTemplateDTOv1.getUser(), searchTemplateDTOv1.getUser());
-        assertEquals(newSearchTemplateDTOv1.getPage(), searchTemplateDTOv1.getPage());
-        assertEquals(newSearchTemplateDTOv1.getCriteriaAsJson(), searchTemplateDTOv1.getCriteriaAsJson());
+        SearchConfigDTOV1 searchConfigDTOV1 = response.as(SearchConfigDTOV1.class);
+        assertThat(searchConfigDTOV1.getId()).isEqualTo(searchConfigId);
+        assertThat(searchConfigDTOV1.getApplication()).isEqualTo(updateRequestBody.getApplication());
+        assertThat(searchConfigDTOV1.getName()).isEqualTo(updateRequestBody.getName());
+        assertThat(searchConfigDTOV1.getPage()).isEqualTo(updateRequestBody.getPage());
+        assertThat(searchConfigDTOV1.getModificationCount()).isSameAs(1);
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldUpdateSearchTemplateDefaultAsDefault() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldNotUpdateSearchConfigWhenBadRequest() {
         // given
-        String searchTemplateId = "0bdd8a31-185a-4e13-9c4c-780ed1beec07";
+        String configId = "1";
+
+        // when
+        var response = given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .put(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + configId).prettyPeek();
+
+        // then
+        response.then().statusCode(400);
+    }
+
+    @Test
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldNotUpdateSearchConfigNotExists() {
+
+        // given
+        String searchConfigId = "NotExists";
 
         String application = "support-tool-ui";
         String name = "criteria-name";
         String page = "criteria-page";
-        String user = "89e93c2c-8fd5-48a0-81b2-8b988a7cb5cc";
-        String criteria = "{\"name\": \"name\",\"id\": \"id\",\"responsible\": \"responsible\"}";
 
-        SearchTemplateDTOv1 newSearchTemplateDTOv1 = new SearchTemplateDTOv1();
-        newSearchTemplateDTOv1.setApplication(application);
-        newSearchTemplateDTOv1.setName(name);
-        newSearchTemplateDTOv1.setPage(page);
-        newSearchTemplateDTOv1.setUser(user);
-        newSearchTemplateDTOv1.setDefaultTemplate(true);
-        newSearchTemplateDTOv1.setModificationCount(1);
-        newSearchTemplateDTOv1.setCriteriaAsJson(criteria);
+        UpdateSearchConfigRequestDTOV1 updateRequestBody = new UpdateSearchConfigRequestDTOV1();
+        updateRequestBody.setApplication(application);
+        updateRequestBody.setName(name);
+        updateRequestBody.setPage(page);
+        updateRequestBody.setModificationCount(1);
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .body(newSearchTemplateDTOv1)
-                .header("Authorization", "bearer " + defaultValidToken)
-                .put("/v1/searchTemplates/" + searchTemplateId);
+                .body(updateRequestBody)
+                .put(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + searchConfigId);
 
         // then
-        response.then().statusCode(200);
-
-        SearchTemplateDTOv1 searchTemplateDTOv1 = response.as(SearchTemplateDTOv1.class);
-
-        assertEquals(searchTemplateId, searchTemplateDTOv1.getId());
-        assertEquals(newSearchTemplateDTOv1.getApplication(), searchTemplateDTOv1.getApplication());
-        assertEquals(newSearchTemplateDTOv1.getName(), searchTemplateDTOv1.getName());
-        assertEquals(true, searchTemplateDTOv1.isDefaultTemplate());
-        assertEquals(newSearchTemplateDTOv1.getUser(), searchTemplateDTOv1.getUser());
-        assertEquals(newSearchTemplateDTOv1.getPage(), searchTemplateDTOv1.getPage());
-        assertEquals(newSearchTemplateDTOv1.getModificationCount(), searchTemplateDTOv1.getModificationCount());
-        assertEquals(newSearchTemplateDTOv1.getCriteriaAsJson(), searchTemplateDTOv1.getCriteriaAsJson());
+        response.then().statusCode(404);
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldUpdateSearchTemplateNotDefaultAsDefault() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldDeleteById() {
         // given
-        String searchTemplateId = "2267f153-724f-4616-b547-d82fafdf8efc";
-
-        String application = "support-tool-ui";
-        String name = "criteria-name";
-        String page = "page1";
-        String user = "89e93c2c-8fd5-48a0-81b2-8b988a7cb5cc";
-        String criteria = "{\"name\": \"name\",\"id\": \"id\",\"responsible\": \"responsible\"}";
-
-        SearchTemplateDTOv1 newSearchTemplateDTOv1 = new SearchTemplateDTOv1();
-        newSearchTemplateDTOv1.setApplication(application);
-        newSearchTemplateDTOv1.setName(name);
-        newSearchTemplateDTOv1.setPage(page);
-        newSearchTemplateDTOv1.setUser(user);
-        newSearchTemplateDTOv1.setDefaultTemplate(true);
-        newSearchTemplateDTOv1.setCriteriaAsJson(criteria);
+        String configId = "1";
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .body(newSearchTemplateDTOv1)
-                .header("Authorization", "bearer " + defaultValidToken)
-                .put("/v1/searchTemplates/" + searchTemplateId);
-
-        // then
-        response.then().statusCode(200);
-
-        SearchTemplateDTOv1 searchTemplateDTOv1 = response.as(SearchTemplateDTOv1.class);
-
-        assertEquals(searchTemplateId, searchTemplateDTOv1.getId());
-        assertEquals(newSearchTemplateDTOv1.getApplication(), searchTemplateDTOv1.getApplication());
-        assertEquals(newSearchTemplateDTOv1.getName(), searchTemplateDTOv1.getName());
-        assertEquals(true, searchTemplateDTOv1.isDefaultTemplate());
-        assertEquals(newSearchTemplateDTOv1.getUser(), searchTemplateDTOv1.getUser());
-        assertEquals(newSearchTemplateDTOv1.getPage(), searchTemplateDTOv1.getPage());
-        assertEquals(newSearchTemplateDTOv1.getCriteriaAsJson(), searchTemplateDTOv1.getCriteriaAsJson());
-
-        // check old default
-        Response checkResponse =
-                given().contentType(MediaType.APPLICATION_JSON)
-                        .when()
-                        .header("Authorization", "bearer " + defaultValidToken)
-                        .get("/v1/searchTemplates/" + "0bdd8a31-185a-4e13-9c4c-780ed1beec07");
-
-        checkResponse.then().statusCode(200);
-
-        SearchTemplateDTOv1 oldDefaultSearchTemplateDTOv1 = checkResponse.as(SearchTemplateDTOv1.class);
-
-        assertFalse(oldDefaultSearchTemplateDTOv1.isDefaultTemplate());
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldNotUpdateSearchTemplateNullTemplate() {
-        // given
-        String searchTemplateId = "0bdd8a31-185a-4e13-9c4c-780ed1beec07";
-
-        String expectedErrorCode = "BAD_REQUEST";
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .put("/v1/searchTemplates/" + searchTemplateId);
-
-        // then
-        response.then().statusCode(400);
-
-        RestExceptionDTO restExceptionDTO = response.as(RestExceptionDTO.class);
-
-        assertEquals(expectedErrorCode, restExceptionDTO.getErrorCode());
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldNotUpdateSearchTemplateNotExists() {
-        // given
-        String searchTemplateId = "NotExists";
-
-        String application = "support-tool-ui";
-        String name = "criteria-name";
-        String page = "criteria-page";
-        String user = "89e93c2c-8fd5-48a0-81b2-8b988a7cb5cc";
-        String criteria = "{\"name\": \"name\",\"id\": \"id\",\"responsible\": \"responsible\"}";
-
-        SearchTemplateDTOv1 newSearchTemplateDTOv1 = new SearchTemplateDTOv1();
-        newSearchTemplateDTOv1.setApplication(application);
-        newSearchTemplateDTOv1.setName(name);
-        newSearchTemplateDTOv1.setPage(page);
-        newSearchTemplateDTOv1.setUser(user);
-        newSearchTemplateDTOv1.setDefaultTemplate(true);
-        newSearchTemplateDTOv1.setCriteriaAsJson(criteria);
-
-        String expectedErrorCode = "BAD_REQUEST";
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .body(newSearchTemplateDTOv1)
-                .header("Authorization", "bearer " + defaultValidToken)
-                .put("/v1/searchTemplates/" + searchTemplateId);
-
-        // then
-        response.then().statusCode(400);
-
-        RestExceptionDTO restExceptionDTO = response.as(RestExceptionDTO.class);
-
-        assertEquals(expectedErrorCode, restExceptionDTO.getErrorCode());
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldDeleteSearchTemplateById() {
-        // given
-        String templateId = "0bdd8a31-185a-4e13-9c4c-780ed1beec07";
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .delete("/v1/searchTemplates/" + templateId);
+                .delete(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + configId).prettyPeek();
 
         // then
         response.then().statusCode(204);
 
         // check deletion
-        Response checkResponse = given()
+        var checkResponse = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .get("/v1/searchTemplates/" + templateId);
+                .get(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId).prettyPeek();
 
-        checkResponse.then().statusCode(200);
+        checkResponse.then().statusCode(404);
 
-        assertTrue(checkResponse.getBody().asString().isEmpty());
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldIgnoreDeleteSearchTemplateNotExists() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldNotDeleteWhenNotExists() {
         // given
-        String searchTemplateId = "NotExists";
+        String configId = "NotExists";
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .delete("/v1/searchTemplates/" + searchTemplateId);
+                .delete(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + configId);
 
         // then
-        response.then().statusCode(204);
+        response.then().statusCode(404);
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldFindByCriteria() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldFindByCriteria() {
         // given
         String application = "support-tool-ui";
-        SearchTemplateSearchCriteria searchTemplateSearchCriteria = new SearchTemplateSearchCriteria();
-        searchTemplateSearchCriteria.setApplication(application);
+        SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
+        requestBody.setApplication(application);
 
-        String[] expectedIds = {
-                "0bdd8a31-185a-4e13-9c4c-780ed1beec07",
-                "9897dfbe-baa5-4d54-9e3b-6131f87684e1",
-                "2267f153-724f-4616-b547-d82fafdf8efc",
-                "42c1cf75-e1c6-4d20-ab71-20422cdd224a",
-                "d91532d1-a727-44e5-8ed6-ed72b1bec5fe",
-                "18a0c67a-d1b6-4b06-badf-8a9bea72c4cc",
-        };
+        String[] expectedIds = {"1", "2", "3", "4"};
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .body(searchTemplateSearchCriteria)
-                .post("/v1/searchTemplates/search/criteria");
+                .body(requestBody)
+                .post(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/search");
 
         // then
         response.then().statusCode(200);
 
-        List<SearchTemplateDTOv1> searchTemplateDTOv1s = Arrays.asList(response.as(SearchTemplateDTOv1[].class));
+        GetSearchConfigResponseDTOV1 responseDTOV1 = response.as(GetSearchConfigResponseDTOV1.class);
+        List<SearchConfigDTOV1> configs = responseDTOV1.getConfigs();
 
-        assertEquals(6, searchTemplateDTOv1s.size());
+        assertThat(configs.size()).isSameAs(4);
 
-        List<String> searchTemplateApplications = searchTemplateDTOv1s.stream()
-                .map(SearchTemplateDTOv1::getApplication)
+        List<String> searchConfigApplications = configs.stream()
+                .map(SearchConfigDTOV1::getApplication)
                 .collect(Collectors.toList());
-        assertTrue(searchTemplateApplications.contains(application));
+        assertThat(searchConfigApplications).contains(application);
 
-        List<String> searchTemplateIds = searchTemplateDTOv1s.stream()
-                .map(SearchTemplateDTOv1::getId)
+        List<String> configIds = configs.stream()
+                .map(SearchConfigDTOV1::getId)
                 .collect(Collectors.toList());
-        assertTrue(searchTemplateIds.containsAll(Arrays.asList(expectedIds)));
+        assertThat(configIds).containsAll(Arrays.asList(expectedIds));
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldFindByCriteriaGlobalAndUser() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldFindByCriteriaPage() {
         // given
-        String application = "support-tool-ui";
-        SearchTemplateSearchCriteria searchTemplateSearchCriteria = new SearchTemplateSearchCriteria();
-        searchTemplateSearchCriteria.setApplication(application);
-        searchTemplateSearchCriteria.setIncludeGlobal(true);
-        searchTemplateSearchCriteria.setUser("525824b8-d8ab-49cd-a165-68c451ae4839");
+        String page = "page1";
+        SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
+        requestBody.setPage(page);
 
-        String[] expectedIds = {
-                "0bdd8a31-185a-4e13-9c4c-780ed1beec07",
-                "9897dfbe-baa5-4d54-9e3b-6131f87684e1",
-                "42c1cf75-e1c6-4d20-ab71-20422cdd224a",
-                "d91532d1-a727-44e5-8ed6-ed72b1bec5fe",
-        };
+        String[] expectedIds = {"1", "2"};
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .body(searchTemplateSearchCriteria)
-                .header("Authorization", "bearer " + defaultValidToken)
-                .post("/v1/searchTemplates/search/criteria");
+                .body(requestBody)
+                .post(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/search");
 
         // then
         response.then().statusCode(200);
 
-        List<SearchTemplateDTOv1> searchTemplateDTOv1s = Arrays.asList(response.as(SearchTemplateDTOv1[].class));
+        GetSearchConfigResponseDTOV1 responseDTOV1 = response.as(GetSearchConfigResponseDTOV1.class);
+        List<SearchConfigDTOV1> configs = responseDTOV1.getConfigs();
 
-        assertEquals(4, searchTemplateDTOv1s.size());
+        assertThat(configs.size()).isSameAs(2);
 
-        List<String> searchTemplateApplications = searchTemplateDTOv1s.stream()
-                .map(SearchTemplateDTOv1::getApplication)
+        List<String> searchConfigApplications = configs.stream()
+                .map(SearchConfigDTOV1::getPage)
                 .collect(Collectors.toList());
-        assertTrue(searchTemplateApplications.contains(application));
+        assertThat(searchConfigApplications).contains(page);
 
-        List<String> searchTemplateIds = searchTemplateDTOv1s.stream()
-                .map(SearchTemplateDTOv1::getId)
+        List<String> configIds = configs.stream()
+                .map(SearchConfigDTOV1::getId)
                 .collect(Collectors.toList());
-        assertTrue(searchTemplateIds.containsAll(Arrays.asList(expectedIds)));
+        assertThat(configIds).containsAll(Arrays.asList(expectedIds));
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldFindByCriteriaGlobal() {
-        // given
-        String application = "support-tool-ui";
-        SearchTemplateSearchCriteria searchTemplateSearchCriteria = new SearchTemplateSearchCriteria();
-        searchTemplateSearchCriteria.setApplication(application);
-        searchTemplateSearchCriteria.setIncludeGlobal(true);
-
-        String[] expectedIds = {
-                "0bdd8a31-185a-4e13-9c4c-780ed1beec07",
-                "42c1cf75-e1c6-4d20-ab71-20422cdd224a",
-                "d91532d1-a727-44e5-8ed6-ed72b1bec5fe",
-        };
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .body(searchTemplateSearchCriteria)
-                .post("/v1/searchTemplates/search/criteria");
-
-        // then
-        response.then().statusCode(200);
-
-        List<SearchTemplateDTOv1> searchTemplateDTOv1s = Arrays.asList(response.as(SearchTemplateDTOv1[].class));
-
-        assertEquals(3, searchTemplateDTOv1s.size());
-
-        List<String> searchTemplateApplications = searchTemplateDTOv1s.stream()
-                .map(SearchTemplateDTOv1::getApplication)
-                .collect(Collectors.toList());
-        assertTrue(searchTemplateApplications.contains(application));
-
-        List<Boolean> searchTemplateGlobal = searchTemplateDTOv1s.stream()
-                .map(SearchTemplateDTOv1::getGlobal)
-                .collect(Collectors.toList());
-        assertFalse(searchTemplateGlobal.contains(false));
-
-        List<String> searchTemplateIds = searchTemplateDTOv1s.stream()
-                .map(SearchTemplateDTOv1::getId)
-                .collect(Collectors.toList());
-        assertTrue(searchTemplateIds.containsAll(Arrays.asList(expectedIds)));
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldFindByCriteriaUser() {
-        // given
-        SearchTemplateSearchCriteria searchTemplateSearchCriteria = new SearchTemplateSearchCriteria();
-        searchTemplateSearchCriteria.setUser("525824b8-d8ab-49cd-a165-68c451ae4839");
-
-        String[] expectedIds = {
-                "9897dfbe-baa5-4d54-9e3b-6131f87684e1",
-                "9a76c5fc-44dd-49e4-8fc0-c687881405bf"
-        };
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .body(searchTemplateSearchCriteria)
-                .post("/v1/searchTemplates/search/criteria");
-
-        // then
-        response.then().statusCode(200);
-
-        List<SearchTemplateDTOv1> searchTemplateDTOv1s = Arrays.asList(response.as(SearchTemplateDTOv1[].class));
-
-        assertEquals(2, searchTemplateDTOv1s.size());
-
-        List<String> searchTemplateUsers = searchTemplateDTOv1s.stream()
-                .map(SearchTemplateDTOv1::getUser)
-                .collect(Collectors.toList());
-        assertTrue(searchTemplateUsers.contains("525824b8-d8ab-49cd-a165-68c451ae4839"));
-
-        List<String> searchTemplateIds = searchTemplateDTOv1s.stream()
-                .map(SearchTemplateDTOv1::getId)
-                .collect(Collectors.toList());
-        assertTrue(searchTemplateIds.containsAll(Arrays.asList(expectedIds)));
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldFindByCriteriaEmptyCriteria() {
-        // given
-        String application = "no-match-app";
-        SearchTemplateSearchCriteria searchTemplateSearchCriteria = new SearchTemplateSearchCriteria();
-        searchTemplateSearchCriteria.setApplication(application);
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .body(searchTemplateSearchCriteria)
-                .post("/v1/searchTemplates/search/criteria");
-
-        // then
-        response.then().statusCode(200);
-
-        List<SearchTemplateDTOv1> searchTemplateDTOv1s = Arrays.asList(response.as(SearchTemplateDTOv1[].class));
-        assertTrue(searchTemplateDTOv1s.isEmpty());
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldFindByCriteriaNoMatch() {
-        // given
-        SearchTemplateSearchCriteria searchTemplateSearchCriteria = new SearchTemplateSearchCriteria();
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .body(searchTemplateSearchCriteria)
-                .post("/v1/searchTemplates/search/criteria");
-
-        // then
-        response.then().statusCode(200);
-
-        List<SearchTemplateDTOv1> searchTemplateDTOv1s = Arrays.asList(response.as(SearchTemplateDTOv1[].class));
-
-        assertEquals(15, searchTemplateDTOv1s.size());
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldNotFindByCriteriaNullCriteria() {
-        // given
-        String expectedErrorCode = "BAD_REQUEST";
-
-        // when
-        Response response = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .post("/v1/searchTemplates/search/criteria");
-
-        // then
-        response.then().statusCode(400);
-
-        RestExceptionDTO restExceptionDTO = response.as(RestExceptionDTO.class);
-
-        assertEquals(expectedErrorCode, restExceptionDTO.getErrorCode());
-    }
-
-    @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldGetDefaultSearchTemplate() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldFindOneResultByCriteria() {
         // given
         String application = "support-tool-ui";
         String page = "page1";
-        String user = "89e93c2c-8fd5-48a0-81b2-8b988a7cb5cc";
-
-        String expectedId = "0bdd8a31-185a-4e13-9c4c-780ed1beec07";
-        String expectedCriteria = "{\"name\": \"name\",\"id\": \"id\",\"responsible\": \"responsible\"}";
+        String name = "name1";
+        SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
+        requestBody.setApplication(application);
+        requestBody.setPage(page);
+        requestBody.setName(name);
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .get("/v1/searchTemplates/default/" + application +
-                        "/" + page +
-                        "/" + user);
+                .body(requestBody)
+                .post(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/search");
 
         // then
         response.then().statusCode(200);
 
-        SearchTemplateDTOv1 searchTemplateDTOv1 = response.as(SearchTemplateDTOv1.class);
+        GetSearchConfigResponseDTOV1 responseDTOV1 = response.as(GetSearchConfigResponseDTOV1.class);
+        List<SearchConfigDTOV1> configs = responseDTOV1.getConfigs();
 
-        assertEquals(expectedId, searchTemplateDTOv1.getId());
-        assertEquals(application, searchTemplateDTOv1.getApplication());
-        assertEquals(user, searchTemplateDTOv1.getUser());
-        assertEquals(true, searchTemplateDTOv1.isDefaultTemplate());
-        assertEquals(expectedCriteria, searchTemplateDTOv1.getCriteriaAsJson());
+        assertThat(configs.size()).isSameAs(1);
+
+        SearchConfigDTOV1 searchConfigDTOV1 = configs.get(0);
+        assertThat(searchConfigDTOV1.getId()).isEqualTo("2");
+        assertThat(searchConfigDTOV1.getApplication()).isEqualTo(application);
+        assertThat(searchConfigDTOV1.getName()).isEqualTo(name);
+        assertThat(searchConfigDTOV1.getPage()).isEqualTo(page);
     }
 
     @Test
-    @WithDBData(value = {"tkitportal-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
-    public void shouldNotGetDefaultSearchTemplateNotExists() {
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldFindByCriteriaNoMatch() {
         // given
-        String application = "tkit-process-ui";
-        String page = "page2";
-        String user = "ce36cbec-3674-4d4a-ba83-9f7958c45d8d";
+        String application = "no-match-app";
+        SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
+        requestBody.setApplication(application);
 
         // when
-        Response response = given()
+        var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .header("Authorization", "bearer " + defaultValidToken)
-                .get("/v1/searchTemplates/default/" + application +
-                        "/" + page +
-                        "/" + user);
+                .body(requestBody)
+                .post(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/search");
 
         // then
         response.then().statusCode(200);
 
-        assertTrue(response.getBody().asString().isEmpty());
+        GetSearchConfigResponseDTOV1 responseDTOV1 = response.as(GetSearchConfigResponseDTOV1.class);
+        assertThat(responseDTOV1.getConfigs()).isEmpty();
+    }
+
+    @Test
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldFindAllByCriteriaEmpty() {
+        // given
+        SearchConfigSearchRequestDTOV1 searchConfigSearchCriteria = new SearchConfigSearchRequestDTOV1();
+
+        // when
+        var response = given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .body(searchConfigSearchCriteria)
+                .post(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/search");
+
+        // then
+        response.then().statusCode(200);
+
+        GetSearchConfigResponseDTOV1 responseDTOV1 = response.as(GetSearchConfigResponseDTOV1.class);
+        assertThat(responseDTOV1.getConfigs()).hasSize(8);
+    }
+
+    @Test
+    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    void shouldNotFindByCriteriaNullCriteria() {
+        // given
+
+        // when
+        var response = given()
+                .contentType(MediaType.APPLICATION_JSON)
+                .when()
+                .post(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/search");
+
+        // then
+        response.then().statusCode(400);
     }
 }

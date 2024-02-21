@@ -16,6 +16,7 @@ paths:
       description: Creates the search config.
       operationId: createSearchConfig
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -47,6 +48,7 @@ paths:
       description: The search configs are found by search criteria.
       operationId: findBySearchCriteria
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -57,7 +59,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSearchTemplatesResponse'
+                $ref: '#/components/schemas/GetSearchConfigResponse'
         "400":
           description: Bad request
           content:
@@ -109,6 +111,7 @@ paths:
           schema:
             type: string
       requestBody:
+        required: true
         content:
           application/json:
             schema:
@@ -225,7 +228,7 @@ components:
       properties:
         config:
           $ref: '#/components/schemas/SearchConfig'
-    GetSearchTemplatesResponse:
+    GetSearchConfigResponse:
       type: object
       properties:
         configs:

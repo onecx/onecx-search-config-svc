@@ -1,8 +1,8 @@
-package org.onecx.search.config.rs.external.v1;
+package org.onecx.search.config.rs.internal;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-public class SearchConfigControllerV1TestIT extends SearchConfigControllerV1Test {
+public class SearchConfigControllerInternalTestIT extends SearchConfigControllerInternalTest {
 
 }

@@ -20,7 +20,7 @@ import org.tkit.quarkus.jpa.exceptions.DAOException;
 
 import gen.io.github.onecx.search.config.rs.internal.SearchConfigInternalApi;
 import gen.io.github.onecx.search.config.rs.internal.model.CreateSearchConfigRequestDTO;
-import gen.io.github.onecx.search.config.rs.internal.model.GetSearchTemplatesResponseDTO;
+import gen.io.github.onecx.search.config.rs.internal.model.GetSearchConfigResponseDTO;
 import gen.io.github.onecx.search.config.rs.internal.model.SearchConfigSearchRequestDTO;
 import gen.io.github.onecx.search.config.rs.internal.model.UpdateSearchConfigRequestDTO;
 import lombok.extern.slf4j.Slf4j;
@@ -73,15 +73,14 @@ public class SearchConfigControllerInternal implements SearchConfigInternalApi {
         if (results == null) {
             return Response.status(NOT_FOUND).build();
         }
-        GetSearchTemplatesResponseDTO getSearchTemplatesResponse = new GetSearchTemplatesResponseDTO();
-        getSearchTemplatesResponse.setConfigs(searchConfigMapper.mapList(results));
-        return Response.ok().entity(getSearchTemplatesResponse).build();
+        GetSearchConfigResponseDTO getSearchConfigResponse = new GetSearchConfigResponseDTO();
+        getSearchConfigResponse.setConfigs(searchConfigMapper.mapList(results));
+        return Response.ok().entity(getSearchConfigResponse).build();
     }
 
     @Override
     public Response getSearchConfigById(String configId) {
         var searchConfig = searchConfigDAO.findById(configId);
-        log.info("SEARCH CONFIG:!!!!!!!!!!!!!!!!!!!!!!! \n" + searchConfig.toString());
         if (searchConfig != null) {
             return Response.ok().entity(searchConfigMapper.map(searchConfig)).build();
         }

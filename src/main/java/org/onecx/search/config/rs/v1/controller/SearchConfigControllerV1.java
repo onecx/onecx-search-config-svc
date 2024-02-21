@@ -69,9 +69,9 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
         if (results == null) {
             return Response.status(NOT_FOUND).build();
         }
-        GetSearchTemplatesResponseDTOV1 getSearchTemplatesResponse = new GetSearchTemplatesResponseDTOV1();
-        getSearchTemplatesResponse.setConfigs(searchConfigMapper.mapList(results));
-        return Response.ok().entity(getSearchTemplatesResponse).build();
+        GetSearchConfigResponseDTOV1 getSearchConfigResponse = new GetSearchConfigResponseDTOV1();
+        getSearchConfigResponse.setConfigs(searchConfigMapper.mapList(results));
+        return Response.ok().entity(getSearchConfigResponse).build();
     }
 
     @Override
@@ -80,9 +80,9 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
         if (results == null) {
             return Response.status(NOT_FOUND).build();
         }
-        GetSearchTemplatesResponseDTOV1 getSearchTemplatesResponse = new GetSearchTemplatesResponseDTOV1();
-        getSearchTemplatesResponse.setConfigs(searchConfigMapper.mapList(results));
-        return Response.ok().entity(getSearchTemplatesResponse).build();
+        GetSearchConfigResponseDTOV1 getSearchConfigResponse = new GetSearchConfigResponseDTOV1();
+        getSearchConfigResponse.setConfigs(searchConfigMapper.mapList(results));
+        return Response.ok().entity(getSearchConfigResponse).build();
     }
 
     @Override
