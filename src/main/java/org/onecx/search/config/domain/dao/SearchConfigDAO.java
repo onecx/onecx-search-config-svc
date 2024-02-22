@@ -27,7 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
 
     @Transactional(value = Transactional.TxType.REQUIRED, rollbackOn = DAOException.class)
-    public List<SearchConfig> findByPage(String page) {
+    public List<SearchConfig> findByApplicationAndPage(String application, String page) {
 
         try {
             CriteriaBuilder criteriaBuilder = getEntityManager().getCriteriaBuilder();
@@ -35,6 +35,7 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
             Root<SearchConfig> searchConfigRoot = criteriaQuery.from(SearchConfig.class);
 
             List<Predicate> predicates = new ArrayList<>();
+            predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.APPLICATION), application));
             predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.PAGE), page));
 
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));

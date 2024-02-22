@@ -38,16 +38,17 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldGetSearchConfigsByPage() {
 
         // given
+        String application = "support-tool-ui";
         String page = "page1";
 
         var response = given()
                 .when()
                 .contentType(MediaType.APPLICATION_JSON)
-                .get(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + page)
+                .get(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + application + "/" + page)
                 .prettyPeek();
 
         GetSearchConfigResponseDTOV1 getSearchConfigResponseDTO = response.as(GetSearchConfigResponseDTOV1.class);
@@ -56,7 +57,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldCreateSearchConfig() {
         // given
         String application = "support-tool-ui";
@@ -94,7 +95,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotCreateSearchConfig() {
         // given
 
@@ -109,7 +110,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldUpdateModificationCount() {
         // given
         String searchConfigId = "1";
@@ -143,7 +144,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotUpdateSearchConfigWhenBadRequest() {
         // given
         String configId = "1";
@@ -159,7 +160,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotUpdateSearchConfigNotExists() {
 
         // given
@@ -187,7 +188,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldDeleteById() {
         // given
         String configId = "1";
@@ -212,7 +213,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotDeleteWhenNotExists() {
         // given
         String configId = "NotExists";
@@ -228,7 +229,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteria() {
         // given
         String application = "support-tool-ui";
@@ -264,7 +265,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteriaPage() {
         // given
         String page = "page1";
@@ -300,7 +301,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindOneResultByCriteria() {
         // given
         String application = "support-tool-ui";
@@ -334,7 +335,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteriaNoMatch() {
         // given
         String application = "no-match-app";
@@ -356,7 +357,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindAllByCriteriaEmpty() {
         // given
         SearchConfigSearchRequestDTOV1 searchConfigSearchCriteria = new SearchConfigSearchRequestDTOV1();
@@ -376,7 +377,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotFindByCriteriaNullCriteria() {
         // given
 

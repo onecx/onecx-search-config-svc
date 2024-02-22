@@ -37,7 +37,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldGetSearchConfigsById() {
 
         // given
@@ -56,7 +56,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldCreateSearchConfig() {
         // given
         String application = "support-tool-ui";
@@ -96,7 +96,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotCreateSearchConfig() {
         // given
 
@@ -111,7 +111,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldUpdateModificationCount() {
         // given
         String searchConfigId = "1";
@@ -148,7 +148,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotUpdateSearchConfigWhenBadRequest() {
         // given
         String configId = "1";
@@ -164,7 +164,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotUpdateSearchConfigNotExists() {
 
         // given
@@ -195,7 +195,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldDeleteById() {
         // given
         String configId = "1";
@@ -220,7 +220,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotDeleteWhenNotExists() {
         // given
         String configId = "NotExists";
@@ -236,7 +236,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteria() {
         // given
         String application = "support-tool-ui";
@@ -272,7 +272,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteriaNoMatch() {
         // given
         String application = "no-match-app";
@@ -294,7 +294,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindAllByCriteriaEmpty() {
         // given
         SearchConfigSearchRequestDTO searchConfigSearchCriteria = new SearchConfigSearchRequestDTO();
@@ -314,7 +314,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotFindByCriteriaNullCriteria() {
         // given
 

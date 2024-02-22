@@ -3,9 +3,9 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>io.github.onecx</groupId>
+    <groupId>org.tkit.onecx</groupId>
     <artifactId>onecx-quarkus3-parent</artifactId>
-    <version>0.16.0</version>
+    <version>0.35.0</version>
   </parent>
 
   <groupId>org.onecx</groupId>
@@ -61,13 +61,17 @@
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
-      <artifactId>quarkus-flyway</artifactId>
+      <artifactId>quarkus-liquibase</artifactId>
     </dependency>
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-rest-client-reactive</artifactId>
     </dependency>
     <!-- TKIT-QUARKUS-LIBS -->
+    <dependency>
+      <groupId>org.tkit.quarkus.lib</groupId>
+      <artifactId>tkit-quarkus-jpa-tenant</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.tkit.quarkus.lib</groupId>
       <artifactId>tkit-quarkus-rest</artifactId>
@@ -116,7 +120,6 @@
     <dependency>
       <groupId>org.tkit.quarkus.lib</groupId>
       <artifactId>tkit-quarkus-test-db-import</artifactId>
-      <version>0.7.0</version>
       <scope>test</scope>
     </dependency>
     <dependency>

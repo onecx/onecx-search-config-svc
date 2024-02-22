@@ -76,7 +76,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchConfig/{page}:
+  /v1/searchConfig/{application}/{page}:
     get:
       tags:
         - SearchConfigV1
@@ -84,9 +84,13 @@ paths:
       description: The search config for the page is returned.
       operationId: getSearchConfigs
       parameters:
+        - name: application
+          in: path
+          required: true
+          schema:
+            type: string
         - name: page
           in: path
-          description: Value of the page queried
           required: true
           schema:
             type: string

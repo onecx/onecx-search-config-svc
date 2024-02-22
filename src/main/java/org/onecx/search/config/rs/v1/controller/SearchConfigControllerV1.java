@@ -84,8 +84,8 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
     }
 
     @Override
-    public Response getSearchConfigs(String page) {
-        var results = searchConfigDAO.findByPage(page);
+    public Response getSearchConfigs(String application, String page) {
+        var results = searchConfigDAO.findByApplicationAndPage(application, page);
         if (results == null) {
             return Response.status(NOT_FOUND).build();
         }
