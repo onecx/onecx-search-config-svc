@@ -1,17 +1,19 @@
 package org.onecx.search.config.rs.external.v1;
 
-import gen.io.github.onecx.search.config.v1.model.*;
-import io.quarkus.test.junit.QuarkusTest;
-import jakarta.ws.rs.core.MediaType;
-import org.junit.jupiter.api.Test;
-import org.onecx.search.config.rs.test.AbstractTest;
-import org.tkit.quarkus.test.WithDBData;
+import static io.restassured.RestAssured.given;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static io.restassured.RestAssured.given;
-import static org.assertj.core.api.Assertions.assertThat;
+import jakarta.ws.rs.core.MediaType;
+
+import org.junit.jupiter.api.Test;
+import org.onecx.search.config.rs.test.AbstractTest;
+import org.tkit.quarkus.test.WithDBData;
+
+import gen.io.github.onecx.search.config.v1.model.*;
+import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 class SearchConfigControllerV1Test extends AbstractTest {
@@ -36,7 +38,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldGetSearchConfigsByPage() {
 
         // given
@@ -54,7 +56,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldCreateSearchConfig() {
         // given
         String application = "support-tool-ui";
@@ -92,7 +94,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotCreateSearchConfig() {
         // given
 
@@ -107,7 +109,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldUpdateModificationCount() {
         // given
         String searchConfigId = "1";
@@ -141,7 +143,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotUpdateSearchConfigWhenBadRequest() {
         // given
         String configId = "1";
@@ -157,7 +159,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotUpdateSearchConfigNotExists() {
 
         // given
@@ -185,7 +187,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldDeleteById() {
         // given
         String configId = "1";
@@ -210,7 +212,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotDeleteWhenNotExists() {
         // given
         String configId = "NotExists";
@@ -226,14 +228,14 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteria() {
         // given
         String application = "support-tool-ui";
         SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
         requestBody.setApplication(application);
 
-        String[] expectedIds = {"1", "2", "3", "4"};
+        String[] expectedIds = { "1", "2", "3", "4" };
 
         // when
         var response = given()
@@ -262,14 +264,14 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteriaPage() {
         // given
         String page = "page1";
         SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
         requestBody.setPage(page);
 
-        String[] expectedIds = {"1", "2"};
+        String[] expectedIds = { "1", "2" };
 
         // when
         var response = given()
@@ -298,7 +300,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindOneResultByCriteria() {
         // given
         String application = "support-tool-ui";
@@ -332,7 +334,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteriaNoMatch() {
         // given
         String application = "no-match-app";
@@ -354,7 +356,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindAllByCriteriaEmpty() {
         // given
         SearchConfigSearchRequestDTOV1 searchConfigSearchCriteria = new SearchConfigSearchRequestDTOV1();
@@ -374,7 +376,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-testdata.xls"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-testdata.xls" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotFindByCriteriaNullCriteria() {
         // given
 

@@ -4,6 +4,8 @@ import static org.jboss.resteasy.reactive.RestResponse.StatusCode.BAD_REQUEST;
 import static org.jboss.resteasy.reactive.RestResponse.StatusCode.NOT_FOUND;
 
 import jakarta.inject.Inject;
+import jakarta.persistence.OptimisticLockException;
+import jakarta.validation.ConstraintViolationException;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
@@ -12,9 +14,13 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.jboss.resteasy.reactive.RestResponse;
+import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.onecx.search.config.domain.dao.SearchConfigDAO;
 import org.onecx.search.config.domain.models.SearchConfig;
+import org.onecx.search.config.rs.v1.mapper.ExceptionMapper;
 import org.onecx.search.config.rs.v1.mapper.SearchConfigMapper;
+import org.tkit.quarkus.jpa.exceptions.ConstraintException;
 import org.tkit.quarkus.jpa.exceptions.DAOException;
 
 import gen.io.github.onecx.search.config.v1.SearchConfigV1Api;
@@ -31,6 +37,9 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
     SearchConfigMapper searchConfigMapper;
     @Inject
     SearchConfigDAO searchConfigDAO;
+
+    @Inject
+    ExceptionMapper exceptionMapper;
 
     @Context
     UriInfo uriInfo;
@@ -95,6 +104,21 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
             return Response.ok(searchConfigMapper.map(updatedSearchConfig)).build();
         }
         return Response.status(NOT_FOUND).build();
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<ProblemDetailResponseDTOV1> exception(ConstraintException ex) {
+        return exceptionMapper.exception(ex);
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<ProblemDetailResponseDTOV1> constraint(ConstraintViolationException ex) {
+        return exceptionMapper.constraint(ex);
+    }
+
+    @ServerExceptionMapper
+    public RestResponse<ProblemDetailResponseDTOV1> daoException(OptimisticLockException ex) {
+        return exceptionMapper.optimisticLock(ex);
     }
 
 }
