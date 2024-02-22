@@ -34,12 +34,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /internal/searchConfig/search:
     post:
       tags:
@@ -66,12 +60,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /internal/searchConfig/{configId}:
     get:
       tags:
@@ -92,12 +80,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchConfig'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
     put:
       tags:
         - SearchConfigInternal
@@ -129,12 +111,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
     delete:
       tags:
         - SearchConfigInternal
@@ -149,15 +125,7 @@ paths:
             type: string
       responses:
         "204":
-          description: No content
-          content:
-            application/json: { }
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
+          description: Config deleted
 components:
   schemas:
     OffsetDateTime:
