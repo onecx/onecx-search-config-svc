@@ -31,6 +31,8 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "productName", ignore = true)
+    @Mapping(target = "appId", source = "application")
     public abstract SearchConfig create(CreateSearchConfigRequestDTOV1 dto);
 
     public String map(Map<String, String> values) throws JsonProcessingException {
@@ -43,6 +45,7 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "isAdvanced", source = "advanced")
     @Mapping(target = "removeColumnsItem", source = "advanced")
     @Mapping(target = "removeValuesItem", source = "advanced")
+    @Mapping(target = "application", source = "appId")
     public abstract SearchConfigDTOV1 map(SearchConfig searchConfig);
 
     @Mapping(target = "id", ignore = true)
@@ -58,6 +61,8 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "productName", ignore = true)
+    @Mapping(target = "appId", source = "application")
     public abstract SearchConfig update(@MappingTarget SearchConfig searchConfig, UpdateSearchConfigRequestDTOV1 dto);
 
     public String map(List<String> value) throws JsonProcessingException {
@@ -97,6 +102,8 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "values", ignore = true)
     @Mapping(target = "columns", ignore = true)
     @Mapping(target = "userId", ignore = true)
+    @Mapping(target = "productName", ignore = true)
+    @Mapping(target = "appId", source = "application")
     public abstract SearchConfig map(SearchConfigSearchRequestDTOV1 configSearchRequestDTO);
 
     public abstract List<SearchConfigDTOV1> mapList(List<SearchConfig> searchConfigs);

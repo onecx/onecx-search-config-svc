@@ -19,11 +19,12 @@
                 <constraints nullable="false" primaryKey="true" primaryKeyName="permission_pkey"/>
             </column>
             <column name="api_version" type="VARCHAR(255)"/>
-            <column name="application" type="VARCHAR(255)"/>
+            <column name="appId" type="VARCHAR(255)"/>
             <column name="page" type="VARCHAR(255)"/>
             <column name="name" type="VARCHAR(255)"/>
             <column name="tenant_id" type="VARCHAR(255)"/>
             <column name="user_id" type="VARCHAR(255)"/>
+            <column name="PRODUCT_NAME" type="VARCHAR(255)"/>
             <column name="fieldListVersion" type="int4"/>
             <column name="values" type="text"/>
             <column name="columns" type="text"/>
@@ -31,7 +32,7 @@
             <column name="advanced" type="boolean"/>
         </createTable>
 
-        <addUniqueConstraint columnNames="name, page, application, tenant_id" constraintName="ck_config"
+        <addUniqueConstraint columnNames="name, page, appId, tenant_id" constraintName="ck_config"
                              tableName="search_config"/>
 
     </changeSet>

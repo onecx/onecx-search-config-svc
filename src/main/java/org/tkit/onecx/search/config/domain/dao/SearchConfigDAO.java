@@ -35,7 +35,7 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
             Root<SearchConfig> searchConfigRoot = criteriaQuery.from(SearchConfig.class);
 
             List<Predicate> predicates = new ArrayList<>();
-            predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.APPLICATION), application));
+            predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.APP_ID), application));
             predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.PAGE), page));
 
             criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
@@ -63,7 +63,7 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
 
             List<Predicate> predicates = new ArrayList<>();
             if (application != null && !application.isEmpty()) {
-                predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.APPLICATION), application));
+                predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.APP_ID), application));
             }
 
             if (page != null && !page.isEmpty()) {

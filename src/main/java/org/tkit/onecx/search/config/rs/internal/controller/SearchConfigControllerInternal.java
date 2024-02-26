@@ -43,7 +43,7 @@ public class SearchConfigControllerInternal implements SearchConfigInternalApi {
 
     @Override
     public Response createSearchConfig(CreateSearchConfigRequestDTO createSearchConfigRequestDTO) {
-        var searchConfig = searchConfigMapper.create(createSearchConfigRequestDTO.getConfig());
+        var searchConfig = searchConfigMapper.create(createSearchConfigRequestDTO);
         var responseSearchConfig = searchConfigDAO.create(searchConfig);
         return Response
                 .created(uriInfo.getAbsolutePathBuilder().path(responseSearchConfig.getId()).build())
@@ -87,7 +87,7 @@ public class SearchConfigControllerInternal implements SearchConfigInternalApi {
         var searchConfig = searchConfigDAO.findById(configId);
         if (searchConfig != null) {
             SearchConfig updatedSearchConfig = searchConfigDAO
-                    .update(searchConfigMapper.update(searchConfig, updateSearchConfigRequestDTO.getConfig()));
+                    .update(searchConfigMapper.update(searchConfig, updateSearchConfigRequestDTO));
             return Response.ok(searchConfigMapper.map(updatedSearchConfig)).build();
         }
         return Response.status(NOT_FOUND).build();

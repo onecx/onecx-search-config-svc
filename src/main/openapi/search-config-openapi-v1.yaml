@@ -42,12 +42,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
     delete:
       tags:
         - SearchConfigV1
@@ -66,12 +60,6 @@ paths:
           description: OK
         '400':
           description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-        '500':
-          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -107,12 +95,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /v1/searchConfig/:
     post:
       tags:
@@ -140,12 +122,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /v1/searchConfig/search:
     post:
       tags:
@@ -168,12 +144,6 @@ paths:
                 $ref: '#/components/schemas/GetSearchConfigResponse'
         "400":
           description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-        "500":
-          description: Internal Server Error
           content:
             application/json:
               schema:
@@ -280,6 +250,8 @@ components:
             type: string
     UpdateSearchConfigRequest:
       type: object
+      required:
+        - 'modificationCount'
       properties:
         page:
           type: string
@@ -329,6 +301,36 @@ components:
           type: string
         page:
           type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    SearchPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchConfig'
     ProblemDetailResponse:
       type: object
       properties:

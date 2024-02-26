@@ -13,17 +13,19 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name = "search_config", uniqueConstraints = {
-        @UniqueConstraint(name = "search_config", columnNames = { "name", "page", "application", "tenant_id" })
+        @UniqueConstraint(name = "search_config", columnNames = { "name", "page", "appId", "tenant_id" })
 })
 @SuppressWarnings("java:S2160")
 public class SearchConfig extends TraceableEntity {
 
+    @Column(name = "PRODUCT_NAME")
+    private String productName;
     @Column
     private String name;
     @Column
     private String page;
     @Column
-    private String application;
+    private String appId;
     @Column
     private int fieldListVersion;
     @Column

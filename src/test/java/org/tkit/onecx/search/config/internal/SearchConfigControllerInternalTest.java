@@ -46,8 +46,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var response = given()
                 .when()
                 .contentType(MediaType.APPLICATION_JSON)
-                .get(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId)
-                .prettyPeek();
+                .get(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
 
         SearchConfigDTO searchConfigDTO = response.as(SearchConfigDTO.class);
         // then
@@ -64,16 +63,14 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         String page = "criteria-page";
 
         CreateSearchConfigRequestDTO requestBody = new CreateSearchConfigRequestDTO();
-        SearchConfigDTO newSearchConfig = new SearchConfigDTO();
-        newSearchConfig.setApplication(application);
-        newSearchConfig.setName(name);
-        newSearchConfig.setPage(page);
-        newSearchConfig.values(setupValues());
-        newSearchConfig.setColumns(setupColumns());
-        newSearchConfig.setFieldListVersion(1);
-        newSearchConfig.setIsReadOnly(true);
-        newSearchConfig.setIsAdvanced(false);
-        requestBody.setConfig(newSearchConfig);
+        requestBody.setApplication(application);
+        requestBody.setName(name);
+        requestBody.setPage(page);
+        requestBody.values(setupValues());
+        requestBody.setColumns(setupColumns());
+        requestBody.setFieldListVersion(1);
+        requestBody.setIsReadOnly(true);
+        requestBody.setIsAdvanced(false);
 
         // when
         var response = given()
@@ -88,11 +85,11 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         SearchConfigDTO searchConfigDTO = response.as(SearchConfigDTO.class);
 
         assertThat(searchConfigDTO.getId()).isNotNull();
-        assertThat(newSearchConfig.getApplication()).isEqualTo(searchConfigDTO.getApplication());
-        assertThat(newSearchConfig.getName()).isEqualTo(searchConfigDTO.getName());
-        assertThat(newSearchConfig.getPage()).isEqualTo(searchConfigDTO.getPage());
-        assertThat(newSearchConfig.getColumns()).isEqualTo(searchConfigDTO.getColumns());
-        assertThat(newSearchConfig.getValues()).isEqualTo(searchConfigDTO.getValues());
+        assertThat(requestBody.getApplication()).isEqualTo(searchConfigDTO.getApplication());
+        assertThat(requestBody.getName()).isEqualTo(searchConfigDTO.getName());
+        assertThat(requestBody.getPage()).isEqualTo(searchConfigDTO.getPage());
+        assertThat(requestBody.getColumns()).isEqualTo(searchConfigDTO.getColumns());
+        assertThat(requestBody.getValues()).isEqualTo(searchConfigDTO.getValues());
     }
 
     @Test
@@ -121,13 +118,10 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         String page = "criteria-page";
 
         UpdateSearchConfigRequestDTO updateRequestBody = new UpdateSearchConfigRequestDTO();
-        SearchConfigDTO searchConfigUpdate = new SearchConfigDTO();
-        searchConfigUpdate.setApplication(application);
-        searchConfigUpdate.setName(name);
-        searchConfigUpdate.setId(searchConfigId);
-        searchConfigUpdate.setPage(page);
-        searchConfigUpdate.setModificationCount(0);
-        updateRequestBody.setConfig(searchConfigUpdate);
+        updateRequestBody.setApplication(application);
+        updateRequestBody.setName(name);
+        updateRequestBody.setPage(page);
+        updateRequestBody.setModificationCount(0);
 
         // when
         var response = given()
@@ -141,9 +135,9 @@ class SearchConfigControllerInternalTest extends AbstractTest {
 
         SearchConfigDTO searchConfigDTO = response.as(SearchConfigDTO.class);
         assertThat(searchConfigDTO.getId()).isEqualTo(searchConfigId);
-        assertThat(searchConfigDTO.getApplication()).isEqualTo(searchConfigUpdate.getApplication());
-        assertThat(searchConfigDTO.getName()).isEqualTo(searchConfigUpdate.getName());
-        assertThat(searchConfigDTO.getPage()).isEqualTo(searchConfigUpdate.getPage());
+        assertThat(searchConfigDTO.getApplication()).isEqualTo(updateRequestBody.getApplication());
+        assertThat(searchConfigDTO.getName()).isEqualTo(updateRequestBody.getName());
+        assertThat(searchConfigDTO.getPage()).isEqualTo(updateRequestBody.getPage());
         assertThat(searchConfigDTO.getModificationCount()).isEqualTo(1);
     }
 
@@ -157,7 +151,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .put(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId).prettyPeek();
+                .put(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
 
         // then
         response.then().statusCode(400);
@@ -175,20 +169,17 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         String page = "criteria-page";
 
         UpdateSearchConfigRequestDTO updateRequestBody = new UpdateSearchConfigRequestDTO();
-        SearchConfigDTO searchConfigUpdate = new SearchConfigDTO();
-        searchConfigUpdate.setApplication(application);
-        searchConfigUpdate.setName(name);
-        searchConfigUpdate.setId(searchConfigId);
-        searchConfigUpdate.setPage(page);
-        searchConfigUpdate.setModificationCount(0);
-        updateRequestBody.setConfig(searchConfigUpdate);
+        updateRequestBody.setApplication(application);
+        updateRequestBody.setName(name);
+        updateRequestBody.setPage(page);
+        updateRequestBody.setModificationCount(0);
 
         // when
         var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
                 .body(updateRequestBody)
-                .put(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + searchConfigId).prettyPeek();
+                .put(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + searchConfigId);
 
         // then
         response.then().statusCode(404);
@@ -204,7 +195,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .delete(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId).prettyPeek();
+                .delete(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
 
         // then
         response.then().statusCode(204);
@@ -213,7 +204,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var checkResponse = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .get(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId).prettyPeek();
+                .get(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
 
         checkResponse.then().statusCode(404);
 

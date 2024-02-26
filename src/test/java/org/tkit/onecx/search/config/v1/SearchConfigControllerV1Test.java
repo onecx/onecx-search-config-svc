@@ -48,8 +48,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
         var response = given()
                 .when()
                 .contentType(MediaType.APPLICATION_JSON)
-                .get(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + application + "/" + page)
-                .prettyPeek();
+                .get(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + application + "/" + page);
 
         GetSearchConfigResponseDTOV1 getSearchConfigResponseDTO = response.as(GetSearchConfigResponseDTOV1.class);
         // then
@@ -153,7 +152,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
         var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .put(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + configId).prettyPeek();
+                .put(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + configId);
 
         // then
         response.then().statusCode(400);
@@ -197,7 +196,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
         var response = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .delete(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + configId).prettyPeek();
+                .delete(SEARCH_CONFIG_CONTROLLER_V1_ENDPOINT + "/" + configId);
 
         // then
         response.then().statusCode(204);
@@ -206,7 +205,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
         var checkResponse = given()
                 .contentType(MediaType.APPLICATION_JSON)
                 .when()
-                .get(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId).prettyPeek();
+                .get(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
 
         checkResponse.then().statusCode(404);
 
