@@ -24,7 +24,7 @@ public class SearchConfig extends TraceableEntity {
     private String name;
     @Column
     private String page;
-    @Column
+    @Column(name = "appId")
     private String appId;
     @Column
     private int fieldListVersion;

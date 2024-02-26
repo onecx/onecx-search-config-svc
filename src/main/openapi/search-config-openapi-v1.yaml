@@ -64,7 +64,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchConfig/{application}/{page}:
+  /v1/searchConfig/{productName}/{appId}/{page}:
     get:
       tags:
         - SearchConfigV1
@@ -72,7 +72,12 @@ paths:
       description: The search config for the page is returned.
       operationId: getSearchConfigs
       parameters:
-        - name: application
+        - name: productName
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: appId
           in: path
           required: true
           schema:
@@ -88,7 +93,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSearchConfigResponse'
+                $ref: '#/components/schemas/SearchPageResult'
         '400':
           description: Bad request
           content:
@@ -141,7 +146,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSearchConfigResponse'
+                $ref: '#/components/schemas/SearchPageResult'
         "400":
           description: Bad request
           content:
@@ -159,9 +164,11 @@ components:
           type: string
         name:
           type: string
+        productName:
+          type: string
         modificationCount:
           type: integer
-        application:
+        appId:
           type: string
         fieldListVersion:
           type: integer
@@ -183,6 +190,7 @@ components:
     CreateSearchConfigRequest:
       type: object
       required:
+        - 'productName'
         - 'page'
         - 'name'
         - 'fieldListVersion'
@@ -191,11 +199,13 @@ components:
         - 'columns'
         - 'values'
       properties:
+        productName:
+          type: string
         page:
           type: string
         name:
           type: string
-        application:
+        appId:
           type: string
         fieldListVersion:
           type: integer
@@ -217,6 +227,7 @@ components:
     CreateSearchConfigResponse:
       type: object
       required:
+        - 'productName'
         - 'page'
         - 'name'
         - 'fieldListVersion'
@@ -225,11 +236,13 @@ components:
         - 'columns'
         - 'values'
       properties:
+        productName:
+          type: string
         page:
           type: string
         name:
           type: string
-        application:
+        appId:
           type: string
         fieldListVersion:
           type: integer
@@ -257,7 +270,7 @@ components:
           type: string
         name:
           type: string
-        application:
+        appId:
           type: string
         modificationCount:
           type: integer
@@ -285,19 +298,14 @@ components:
       properties:
         config:
           $ref: '#/components/schemas/SearchConfig'
-    GetSearchConfigResponse:
-      type: object
-      properties:
-        configs:
-          type: array
-          items:
-            $ref: '#/components/schemas/SearchConfig'
     SearchConfigSearchRequest:
       type: object
       properties:
+        productName:
+          type: string
         name:
           type: string
-        application:
+        appId:
           type: string
         page:
           type: string

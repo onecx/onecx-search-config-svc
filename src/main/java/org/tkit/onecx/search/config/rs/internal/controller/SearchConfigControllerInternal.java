@@ -63,13 +63,8 @@ public class SearchConfigControllerInternal implements SearchConfigInternalApi {
 
     @Override
     public Response findBySearchCriteria(SearchConfigSearchRequestDTO searchConfigSearchRequestDTO) {
-        var results = searchConfigDAO.findBySearchCriteria(searchConfigMapper.mapToV1(searchConfigSearchRequestDTO));
-        if (results == null) {
-            return Response.status(NOT_FOUND).build();
-        }
-        GetSearchConfigResponseDTO getSearchConfigResponse = new GetSearchConfigResponseDTO();
-        getSearchConfigResponse.setConfigs(searchConfigMapper.mapList(results));
-        return Response.ok().entity(getSearchConfigResponse).build();
+        var results = searchConfigDAO.findBySearchCriteria(searchConfigMapper.map(searchConfigSearchRequestDTO));
+        return Response.ok().entity(searchConfigMapper.map(results)).build();
     }
 
     @Override

@@ -145,11 +145,13 @@ components:
           type: string
         id:
           type: string
-        application:
+        appId:
           type: string
         page:
           type: string
         name:
+          type: string
+        productName:
           type: string
         apiVersion:
           type: string
@@ -176,6 +178,7 @@ components:
     CreateSearchConfigRequest:
       type: object
       required:
+        - 'productName'
         - 'page'
         - 'name'
         - 'fieldListVersion'
@@ -184,11 +187,13 @@ components:
         - 'columns'
         - 'values'
       properties:
+        productName:
+          type: string
         page:
           type: string
         name:
           type: string
-        application:
+        appId:
           type: string
         fieldListVersion:
           type: integer
@@ -210,9 +215,11 @@ components:
     SearchConfigSearchRequest:
       type: object
       properties:
+        productName:
+          type: string
         name:
           type: string
-        application:
+        appId:
           type: string
         page:
           type: string
@@ -235,7 +242,7 @@ components:
           type: string
         name:
           type: string
-        application:
+        appId:
           type: string
         modificationCount:
           type: integer

@@ -7,7 +7,9 @@ import java.util.Map;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.tkit.onecx.search.config.domain.criteria.SearchConfigCriteria;
 import org.tkit.onecx.search.config.domain.models.SearchConfig;
+import org.tkit.quarkus.jpa.daos.PageResult;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -31,8 +33,6 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
     @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "productName", ignore = true)
-    @Mapping(target = "appId", source = "application")
     public abstract SearchConfig create(CreateSearchConfigRequestDTOV1 dto);
 
     public String map(Map<String, String> values) throws JsonProcessingException {
@@ -45,11 +45,9 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "isAdvanced", source = "advanced")
     @Mapping(target = "removeColumnsItem", source = "advanced")
     @Mapping(target = "removeValuesItem", source = "advanced")
-    @Mapping(target = "application", source = "appId")
     public abstract SearchConfigDTOV1 map(SearchConfig searchConfig);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "modificationCount", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modificationDate", ignore = true)
     @Mapping(target = "creationUser", ignore = true)
@@ -58,11 +56,10 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "controlTraceabilityManual", ignore = true)
     @Mapping(target = "persisted", ignore = true)
     @Mapping(target = "apiVersion", ignore = true)
-    @Mapping(target = "readOnly", source = "isReadOnly")
-    @Mapping(target = "advanced", source = "isAdvanced")
     @Mapping(target = "userId", ignore = true)
     @Mapping(target = "productName", ignore = true)
-    @Mapping(target = "appId", source = "application")
+    @Mapping(target = "readOnly", source = "isReadOnly")
+    @Mapping(target = "advanced", source = "isAdvanced")
     public abstract SearchConfig update(@MappingTarget SearchConfig searchConfig, UpdateSearchConfigRequestDTOV1 dto);
 
     public String map(List<String> value) throws JsonProcessingException {
@@ -86,25 +83,10 @@ public abstract class SearchConfigMapper {
         return values;
     }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "modificationCount", ignore = true)
-    @Mapping(target = "creationDate", ignore = true)
-    @Mapping(target = "modificationDate", ignore = true)
-    @Mapping(target = "creationUser", ignore = true)
-    @Mapping(target = "modificationUser", ignore = true)
-    @Mapping(target = "tenantId", ignore = true)
-    @Mapping(target = "controlTraceabilityManual", ignore = true)
-    @Mapping(target = "persisted", ignore = true)
-    @Mapping(target = "apiVersion", ignore = true)
-    @Mapping(target = "readOnly", ignore = true)
-    @Mapping(target = "advanced", ignore = true)
-    @Mapping(target = "fieldListVersion", ignore = true)
-    @Mapping(target = "values", ignore = true)
-    @Mapping(target = "columns", ignore = true)
-    @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "productName", ignore = true)
-    @Mapping(target = "appId", source = "application")
-    public abstract SearchConfig map(SearchConfigSearchRequestDTOV1 configSearchRequestDTO);
+    public abstract SearchConfigCriteria map(SearchConfigSearchRequestDTOV1 configSearchRequestDTO);
 
     public abstract List<SearchConfigDTOV1> mapList(List<SearchConfig> searchConfigs);
+
+    @Mapping(target = "removeStreamItem", ignore = true)
+    public abstract SearchPageResultDTOV1 map(PageResult<SearchConfig> page);
 }

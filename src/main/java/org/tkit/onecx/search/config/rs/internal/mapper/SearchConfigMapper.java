@@ -7,17 +7,15 @@ import java.util.Map;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.tkit.onecx.search.config.domain.criteria.SearchConfigCriteria;
 import org.tkit.onecx.search.config.domain.models.SearchConfig;
+import org.tkit.quarkus.jpa.daos.PageResult;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import gen.org.tkit.onecx.search.config.rs.internal.model.CreateSearchConfigRequestDTO;
-import gen.org.tkit.onecx.search.config.rs.internal.model.SearchConfigDTO;
-import gen.org.tkit.onecx.search.config.rs.internal.model.SearchConfigSearchRequestDTO;
-import gen.org.tkit.onecx.search.config.rs.internal.model.UpdateSearchConfigRequestDTO;
-import gen.org.tkit.onecx.search.config.v1.model.SearchConfigSearchRequestDTOV1;
+import gen.org.tkit.onecx.search.config.rs.internal.model.*;
 
 @Mapper(uses = OffsetDateTimeMapper.class)
 public abstract class SearchConfigMapper {
@@ -36,7 +34,6 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "productName", ignore = true)
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
-    @Mapping(target = "appId", source = "application")
     public abstract SearchConfig create(CreateSearchConfigRequestDTO dto);
 
     public String map(Map<String, String> values) throws JsonProcessingException {
@@ -44,13 +41,6 @@ public abstract class SearchConfigMapper {
         return mapper.writeValueAsString(values);
 
     }
-
-    @Mapping(target = "isReadOnly", source = "readOnly")
-    @Mapping(target = "isAdvanced", source = "advanced")
-    @Mapping(target = "removeColumnsItem", source = "advanced")
-    @Mapping(target = "removeValuesItem", source = "advanced")
-    @Mapping(target = "application", source = "appId")
-    public abstract SearchConfigDTO map(SearchConfig searchConfig);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
@@ -65,7 +55,6 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "productName", ignore = true)
     @Mapping(target = "readOnly", source = "isReadOnly")
     @Mapping(target = "advanced", source = "isAdvanced")
-    @Mapping(target = "appId", source = "application")
     public abstract SearchConfig update(@MappingTarget SearchConfig searchConfig, UpdateSearchConfigRequestDTO dto);
 
     public String map(List<String> value) throws JsonProcessingException {
@@ -89,27 +78,15 @@ public abstract class SearchConfigMapper {
         return values;
     }
 
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "modificationCount", ignore = true)
-    @Mapping(target = "creationDate", ignore = true)
-    @Mapping(target = "modificationDate", ignore = true)
-    @Mapping(target = "creationUser", ignore = true)
-    @Mapping(target = "modificationUser", ignore = true)
-    @Mapping(target = "tenantId", ignore = true)
-    @Mapping(target = "controlTraceabilityManual", ignore = true)
-    @Mapping(target = "persisted", ignore = true)
-    @Mapping(target = "apiVersion", ignore = true)
-    @Mapping(target = "readOnly", ignore = true)
-    @Mapping(target = "advanced", ignore = true)
-    @Mapping(target = "fieldListVersion", ignore = true)
-    @Mapping(target = "values", ignore = true)
-    @Mapping(target = "columns", ignore = true)
-    @Mapping(target = "userId", ignore = true)
-    @Mapping(target = "productName", ignore = true)
-    @Mapping(target = "appId", source = "application")
-    public abstract SearchConfig map(SearchConfigSearchRequestDTO configSearchRequestDTO);
+    public abstract SearchConfigCriteria map(SearchConfigSearchRequestDTO configSearchRequestDTO);
 
-    public abstract SearchConfigSearchRequestDTOV1 mapToV1(SearchConfigSearchRequestDTO configSearchRequestDTO);
+    @Mapping(target = "removeStreamItem", ignore = true)
+    public abstract SearchPageResultDTO map(PageResult<SearchConfig> page);
 
-    public abstract List<SearchConfigDTO> mapList(List<SearchConfig> searchConfigs);
+    @Mapping(target = "isReadOnly", source = "readOnly")
+    @Mapping(target = "isAdvanced", source = "advanced")
+    @Mapping(target = "removeColumnsItem", source = "advanced")
+    @Mapping(target = "removeValuesItem", source = "advanced")
+    public abstract SearchConfigDTO map(SearchConfig searchConfig);
+
 }

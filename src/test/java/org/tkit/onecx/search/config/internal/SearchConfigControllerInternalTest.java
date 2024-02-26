@@ -1,24 +1,26 @@
 package org.tkit.onecx.search.config.internal;
 
 import static io.restassured.RestAssured.given;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.jboss.resteasy.reactive.RestResponse.Status.*;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
-import jakarta.ws.rs.core.MediaType;
-
 import org.junit.jupiter.api.Test;
+import org.tkit.onecx.search.config.rs.internal.controller.SearchConfigControllerInternal;
 import org.tkit.onecx.search.config.test.AbstractTest;
 import org.tkit.quarkus.test.WithDBData;
 
 import gen.org.tkit.onecx.search.config.rs.internal.model.*;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
+@TestHTTPEndpoint(SearchConfigControllerInternal.class)
+@WithDBData(value = "search-config-data.xml", deleteBeforeInsert = true, deleteAfterTest = true, rinseAndRepeat = true)
 class SearchConfigControllerInternalTest extends AbstractTest {
-
-    String SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT = "/internal/searchConfig";
 
     private Map<String, String> setupValues() {
         Map<String, String> values = new HashMap<>();
@@ -37,55 +39,52 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldGetSearchConfigsById() {
-
-        // given
         String configId = "1";
 
-        var response = given()
-                .when()
-                .contentType(MediaType.APPLICATION_JSON)
-                .get(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
+        var dto = given()
+                .contentType(APPLICATION_JSON)
+                .get(configId)
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .body().as(SearchConfigDTO.class);
 
-        SearchConfigDTO searchConfigDTO = response.as(SearchConfigDTO.class);
-        // then
-        response.then().statusCode(200);
-        assertThat(searchConfigDTO.getApplication()).isEqualTo("support-tool-ui");
+        assertThat(dto).isNotNull();
+        assertThat(dto.getAppId()).isEqualTo("support-tool-ui");
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldCreateSearchConfig() {
-        // given
+        String productName = "productName1";
         String application = "support-tool-ui";
         String name = "criteria-name";
         String page = "criteria-page";
 
         CreateSearchConfigRequestDTO requestBody = new CreateSearchConfigRequestDTO();
-        requestBody.setApplication(application);
+        requestBody.setAppId(application);
         requestBody.setName(name);
         requestBody.setPage(page);
+        requestBody.setProductName(productName);
         requestBody.values(setupValues());
         requestBody.setColumns(setupColumns());
         requestBody.setFieldListVersion(1);
         requestBody.setIsReadOnly(true);
         requestBody.setIsAdvanced(false);
 
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        var searchConfigDTO = given()
                 .when()
+                .contentType(APPLICATION_JSON)
                 .body(requestBody)
-                .post(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT);
-
-        // then
-        response.then().statusCode(201);
-
-        SearchConfigDTO searchConfigDTO = response.as(SearchConfigDTO.class);
+                .post()
+                .then()
+                .statusCode(CREATED.getStatusCode())
+                .extract()
+                .body()
+                .as(SearchConfigDTO.class);
 
         assertThat(searchConfigDTO.getId()).isNotNull();
-        assertThat(requestBody.getApplication()).isEqualTo(searchConfigDTO.getApplication());
+        assertThat(requestBody.getAppId()).isEqualTo(searchConfigDTO.getAppId());
         assertThat(requestBody.getName()).isEqualTo(searchConfigDTO.getName());
         assertThat(requestBody.getPage()).isEqualTo(searchConfigDTO.getPage());
         assertThat(requestBody.getColumns()).isEqualTo(searchConfigDTO.getColumns());
@@ -93,24 +92,17 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotCreateSearchConfig() {
-        // given
-
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        given()
                 .when()
-                .post(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT);
-
-        // then
-        response.then().statusCode(400);
+                .contentType(APPLICATION_JSON)
+                .post()
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldUpdateModificationCount() {
-        // given
         String searchConfigId = "1";
 
         String application = "support-tool-ui";
@@ -118,50 +110,44 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         String page = "criteria-page";
 
         UpdateSearchConfigRequestDTO updateRequestBody = new UpdateSearchConfigRequestDTO();
-        updateRequestBody.setApplication(application);
+        updateRequestBody.setAppId(application);
         updateRequestBody.setName(name);
         updateRequestBody.setPage(page);
         updateRequestBody.setModificationCount(0);
 
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        var searchConfigDTO = given()
                 .when()
+                .contentType(APPLICATION_JSON)
                 .body(updateRequestBody)
-                .put(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + searchConfigId);
+                .put(searchConfigId)
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .body()
+                .as(SearchConfigDTO.class);
 
-        // then
-        response.then().statusCode(200);
-
-        SearchConfigDTO searchConfigDTO = response.as(SearchConfigDTO.class);
         assertThat(searchConfigDTO.getId()).isEqualTo(searchConfigId);
-        assertThat(searchConfigDTO.getApplication()).isEqualTo(updateRequestBody.getApplication());
+        assertThat(searchConfigDTO.getAppId()).isEqualTo(updateRequestBody.getAppId());
         assertThat(searchConfigDTO.getName()).isEqualTo(updateRequestBody.getName());
         assertThat(searchConfigDTO.getPage()).isEqualTo(updateRequestBody.getPage());
         assertThat(searchConfigDTO.getModificationCount()).isEqualTo(1);
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotUpdateSearchConfigWhenBadRequest() {
-        // given
         String configId = "1";
 
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        given()
                 .when()
-                .put(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
+                .contentType(APPLICATION_JSON)
+                .put(configId)
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
 
-        // then
-        response.then().statusCode(400);
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotUpdateSearchConfigNotExists() {
-
-        // given
         String searchConfigId = "NotExists";
 
         String application = "support-tool-ui";
@@ -169,90 +155,69 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         String page = "criteria-page";
 
         UpdateSearchConfigRequestDTO updateRequestBody = new UpdateSearchConfigRequestDTO();
-        updateRequestBody.setApplication(application);
+        updateRequestBody.setAppId(application);
         updateRequestBody.setName(name);
         updateRequestBody.setPage(page);
         updateRequestBody.setModificationCount(0);
 
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        given()
                 .when()
+                .contentType(APPLICATION_JSON)
                 .body(updateRequestBody)
-                .put(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + searchConfigId);
-
-        // then
-        response.then().statusCode(404);
+                .put(searchConfigId)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldDeleteById() {
-        // given
         String configId = "1";
 
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        given()
                 .when()
-                .delete(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
-
-        // then
-        response.then().statusCode(204);
-
-        // check deletion
-        var checkResponse = given()
-                .contentType(MediaType.APPLICATION_JSON)
-                .when()
-                .get(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
-
-        checkResponse.then().statusCode(404);
+                .contentType(APPLICATION_JSON)
+                .delete(configId)
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
 
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotDeleteWhenNotExists() {
-        // given
         String configId = "NotExists";
 
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        given()
                 .when()
-                .delete(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/" + configId);
-
-        // then
-        response.then().statusCode(404);
+                .contentType(APPLICATION_JSON)
+                .delete(configId)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteria() {
-        // given
         String application = "support-tool-ui";
         SearchConfigSearchRequestDTO requestBody = new SearchConfigSearchRequestDTO();
-        requestBody.setApplication(application);
+        requestBody.setAppId(application);
 
         String[] expectedIds = { "1", "2", "3", "4" };
 
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        var responseDTO = given()
                 .when()
+                .contentType(APPLICATION_JSON)
                 .body(requestBody)
-                .post(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/search");
+                .post("/search")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .body()
+                .as(SearchPageResultDTO.class);
 
-        // then
-        response.then().statusCode(200);
-
-        GetSearchConfigResponseDTO responseDTO = response.as(GetSearchConfigResponseDTO.class);
-        List<SearchConfigDTO> configs = responseDTO.getConfigs();
-
-        assertThat(configs.size()).isSameAs(4);
+        List<SearchConfigDTO> configs = responseDTO.getStream();
+        assertThat(responseDTO.getTotalElements()).isEqualTo(4);
 
         List<String> searchConfigApplications = configs.stream()
-                .map(SearchConfigDTO::getApplication)
+                .map(SearchConfigDTO::getAppId)
                 .collect(Collectors.toList());
         assertThat(searchConfigApplications).contains(application);
 
@@ -263,59 +228,50 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindByCriteriaNoMatch() {
-        // given
         String application = "no-match-app";
         SearchConfigSearchRequestDTO requestBody = new SearchConfigSearchRequestDTO();
-        requestBody.setApplication(application);
+        requestBody.setAppId(application);
 
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        var responseDTO = given()
                 .when()
+                .contentType(APPLICATION_JSON)
                 .body(requestBody)
-                .post(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/search");
+                .post("/search")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .body()
+                .as(SearchPageResultDTO.class);
 
-        // then
-        response.then().statusCode(200);
-
-        GetSearchConfigResponseDTO responseDTO = response.as(GetSearchConfigResponseDTO.class);
-        assertThat(responseDTO.getConfigs()).isEmpty();
+        assertThat(responseDTO.getTotalElements()).isEqualTo(0);
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldFindAllByCriteriaEmpty() {
-        // given
         SearchConfigSearchRequestDTO searchConfigSearchCriteria = new SearchConfigSearchRequestDTO();
 
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        var responseDTO = given()
                 .when()
+                .contentType(APPLICATION_JSON)
                 .body(searchConfigSearchCriteria)
-                .post(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/search");
+                .post("/search")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .body()
+                .as(SearchPageResultDTO.class);
 
-        // then
-        response.then().statusCode(200);
-
-        GetSearchConfigResponseDTO responseDTO = response.as(GetSearchConfigResponseDTO.class);
-        assertThat(responseDTO.getConfigs()).hasSize(8);
+        assertThat(responseDTO.getTotalElements()).isEqualTo(8);
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotFindByCriteriaNullCriteria() {
-        // given
-
-        // when
-        var response = given()
-                .contentType(MediaType.APPLICATION_JSON)
+        given()
                 .when()
-                .post(SEARCH_CONFIG_CONTROLLER_INTERNAL_ENDPOINT + "/search");
-
-        // then
-        response.then().statusCode(400);
+                .contentType(APPLICATION_JSON)
+                .post()
+                .then()
+                .statusCode(BAD_REQUEST.getStatusCode());
     }
 }

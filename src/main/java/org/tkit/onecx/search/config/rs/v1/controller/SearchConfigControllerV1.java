@@ -62,24 +62,14 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
 
     @Override
     public Response findBySearchCriteria(SearchConfigSearchRequestDTOV1 searchConfigSearchRequestDTOV1) {
-        var results = searchConfigDAO.findBySearchCriteria(searchConfigSearchRequestDTOV1);
-        if (results == null) {
-            return Response.status(NOT_FOUND).build();
-        }
-        GetSearchConfigResponseDTOV1 getSearchConfigResponse = new GetSearchConfigResponseDTOV1();
-        getSearchConfigResponse.setConfigs(searchConfigMapper.mapList(results));
-        return Response.ok().entity(getSearchConfigResponse).build();
+        var results = searchConfigDAO.findBySearchCriteria(searchConfigMapper.map(searchConfigSearchRequestDTOV1));
+        return Response.ok().entity(searchConfigMapper.map(results)).build();
     }
 
     @Override
-    public Response getSearchConfigs(String application, String page) {
-        var results = searchConfigDAO.findByApplicationAndPage(application, page);
-        if (results == null) {
-            return Response.status(NOT_FOUND).build();
-        }
-        GetSearchConfigResponseDTOV1 getSearchConfigResponse = new GetSearchConfigResponseDTOV1();
-        getSearchConfigResponse.setConfigs(searchConfigMapper.mapList(results));
-        return Response.ok().entity(getSearchConfigResponse).build();
+    public Response getSearchConfigs(String productName, String appId, String page) {
+        var results = searchConfigDAO.findByApplicationAndPage(productName, appId, page);
+        return Response.ok().entity(searchConfigMapper.map(results)).build();
     }
 
     @Override
