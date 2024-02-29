@@ -1,11 +1,18 @@
 package org.tkit.onecx.search.config.domain.dao;
 
+import static org.tkit.onecx.search.config.domain.dao.SearchConfigDAO.SearchTemplateErrorKey.FIND_SEARCH_CONFIGS_BY_CRITERIA_FAILED;
+import static org.tkit.onecx.search.config.domain.dao.SearchConfigDAO.SearchTemplateErrorKey.FIND_SEARCH_CONFIG_FAILED;
+import static org.tkit.quarkus.jpa.utils.QueryCriteriaUtil.addSearchStringPredicate;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
-import lombok.extern.slf4j.Slf4j;
+
 import org.tkit.onecx.search.config.domain.criteria.SearchConfigCriteria;
 import org.tkit.onecx.search.config.domain.models.SearchConfig;
 import org.tkit.onecx.search.config.domain.models.SearchConfig_;
@@ -14,12 +21,7 @@ import org.tkit.quarkus.jpa.daos.Page;
 import org.tkit.quarkus.jpa.daos.PageResult;
 import org.tkit.quarkus.jpa.exceptions.DAOException;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.tkit.onecx.search.config.domain.dao.SearchConfigDAO.SearchTemplateErrorKey.FIND_SEARCH_CONFIGS_BY_CRITERIA_FAILED;
-import static org.tkit.onecx.search.config.domain.dao.SearchConfigDAO.SearchTemplateErrorKey.FIND_SEARCH_CONFIG_FAILED;
-import static org.tkit.quarkus.jpa.utils.QueryCriteriaUtil.addSearchStringPredicate;
+import lombok.extern.slf4j.Slf4j;
 
 @ApplicationScoped
 @Slf4j
@@ -38,7 +40,7 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
             predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.PAGE), page));
 
             if (!predicates.isEmpty()) {
-                criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+                criteriaQuery.where(predicates.toArray(new Predicate[] {}));
             }
 
             return createPageQuery(criteriaQuery, Page.of(0, 100))
@@ -55,11 +57,6 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
             var criteriaQuery = criteriaBuilder.createQuery(SearchConfig.class);
             var searchConfigRoot = criteriaQuery.from(SearchConfig.class);
 
-            //            List<Predicate> predicates = new ArrayList<>();
-            //            if (searchCriteria.getAppId() != null && !searchCriteria.getAppId().isEmpty()) {
-            //                predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.APP_ID), searchCriteria.getAppId()));
-            //            }
-
             List<Predicate> predicates = new ArrayList<>();
             addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.PRODUCT_NAME),
                     searchCriteria.getProductName());
@@ -71,23 +68,11 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
                     searchCriteria.getName());
 
             if (!predicates.isEmpty()) {
-                criteriaQuery.where(predicates.toArray(new Predicate[]{}));
+                criteriaQuery.where(predicates.toArray(new Predicate[] {}));
             }
 
             return createPageQuery(criteriaQuery, Page.of(searchCriteria.getPageNumber(), searchCriteria.getPageSize()))
                     .getPageResult();
-            //            if (page != null && !page.isEmpty()) {
-            //                predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.PAGE), searchCriteria.getPage()));
-            //            }
-            //
-            //            if (name != null && !name.isEmpty()) {
-            //                predicates.add(criteriaBuilder.equal(searchConfigRoot.get(SearchConfig_.NAME), searchCriteria.getName()));
-            //            }
-            //
-            //            criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
-            //            criteriaQuery.distinct(true);
-            //
-            //            return getEntityManager().createQuery(criteriaQuery).getResultList();
         } catch (Exception exception) {
             throw new DAOException(FIND_SEARCH_CONFIGS_BY_CRITERIA_FAILED, exception);
         }

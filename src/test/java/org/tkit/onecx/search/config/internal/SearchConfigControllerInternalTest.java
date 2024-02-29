@@ -244,7 +244,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
                 .body()
                 .as(SearchPageResultDTO.class);
 
-        assertThat(responseDTO.getTotalElements()).isEqualTo(0);
+        assertThat(responseDTO.getTotalElements()).isZero();
     }
 
     @Test

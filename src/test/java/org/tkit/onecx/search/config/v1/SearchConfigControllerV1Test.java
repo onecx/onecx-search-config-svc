@@ -1,20 +1,21 @@
 package org.tkit.onecx.search.config.v1;
 
-import gen.org.tkit.onecx.search.config.v1.model.*;
-import io.quarkus.test.common.http.TestHTTPEndpoint;
-import io.quarkus.test.junit.QuarkusTest;
+import static io.restassured.RestAssured.given;
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.jboss.resteasy.reactive.RestResponse.Status.*;
+
+import java.util.*;
+import java.util.stream.Collectors;
+
 import org.junit.jupiter.api.Test;
 import org.tkit.onecx.search.config.rs.v1.controller.SearchConfigControllerV1;
 import org.tkit.onecx.search.config.test.AbstractTest;
 import org.tkit.quarkus.test.WithDBData;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static io.restassured.RestAssured.given;
-import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.jboss.resteasy.reactive.RestResponse.Status.*;
+import gen.org.tkit.onecx.search.config.v1.model.*;
+import io.quarkus.test.common.http.TestHTTPEndpoint;
+import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @TestHTTPEndpoint(SearchConfigControllerV1.class)
@@ -170,7 +171,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
     void shouldDeleteById() {
         String configId = "1";
 
-        var response = given()
+        given()
                 .contentType(APPLICATION_JSON)
                 .delete(configId)
                 .then()
@@ -194,7 +195,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
         SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
         requestBody.setAppId(application);
 
-        String[] expectedIds = {"1", "2", "3", "4"};
+        String[] expectedIds = { "1", "2", "3", "4" };
 
         var responseDTO = given()
                 .contentType(APPLICATION_JSON)
@@ -227,7 +228,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
         SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
         requestBody.setPage(page);
 
-        String[] expectedIds = {"1", "2"};
+        String[] expectedIds = { "1", "2" };
 
         var responseDTO = given()
                 .contentType(APPLICATION_JSON)
@@ -322,9 +323,9 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    @WithDBData(value = {"search-config-data.xml"}, deleteBeforeInsert = true, deleteAfterTest = true)
+    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotFindByCriteriaNullCriteria() {
-        var response = given()
+        given()
                 .contentType(APPLICATION_JSON)
                 .post("/search")
                 .then()

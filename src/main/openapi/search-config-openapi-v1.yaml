@@ -8,7 +8,7 @@ tags:
   - name: SearchConfigV1
     description: Search Config Service v1 RS API
 paths:
-  /v1/searchConfig/{configId}:
+  /searchConfig/v1/{configId}:
     put:
       tags:
         - SearchConfigV1
@@ -35,7 +35,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UpdateSearchConfigResponse'
+                $ref: '#/components/schemas/SearchConfig'
         '400':
           description: Bad request
           content:
@@ -64,7 +64,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchConfig/{productName}/{appId}/{page}:
+  /searchConfig/v1/{productName}/{appId}/{page}:
     get:
       tags:
         - SearchConfigV1
@@ -100,7 +100,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchConfig/:
+  /searchConfig/v1/:
     post:
       tags:
         - SearchConfigV1
@@ -127,7 +127,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchConfig/search:
+  /searchConfig/v1/search:
     post:
       tags:
         - SearchConfigV1
@@ -291,13 +291,6 @@ components:
           type: object
           additionalProperties:
             type: string
-    UpdateSearchConfigResponse:
-      type: object
-      required:
-        - 'config'
-      properties:
-        config:
-          $ref: '#/components/schemas/SearchConfig'
     SearchConfigSearchRequest:
       type: object
       properties:
