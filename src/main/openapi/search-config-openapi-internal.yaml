@@ -1,0 +1,366 @@
+openapi: "3.0.3"
+info:
+  title: onecx-search-config-svc
+  version: "1.0"
+servers:
+  - url: https://onecx-search-config-svc/
+tags:
+  - name: SearchConfigInternal
+    description: Execute Search Config CRUD operations
+paths:
+  /internal/searchConfig:
+    post:
+      tags:
+        - SearchConfigInternal
+      summary: Creates the search config.
+      description: Creates the search config.
+      operationId: createSearchConfig
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSearchConfigRequest'
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchConfig'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /internal/searchConfig/search:
+    post:
+      tags:
+        - SearchConfigInternal
+      summary: Finds search configs by criteria.
+      description: The search configs are found by search criteria.
+      operationId: findBySearchCriteria
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchConfigSearchRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GetSearchConfigResponse'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+  /internal/searchConfig/{configId}:
+    get:
+      tags:
+        - SearchConfigInternal
+      summary: Finds search configs by it's id.
+      description: Gets the search config by it's id.
+      operationId: getSearchConfigById
+      parameters:
+        - name: configId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchConfig'
+        "404":
+          description: Not found
+    put:
+      tags:
+        - SearchConfigInternal
+      summary: Updates the search config.
+      description: Updates the search config.
+      operationId: updateSearchConfig
+      parameters:
+        - name: configId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateSearchConfigRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SearchConfig'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+        "404":
+          description: Search-config not found
+    delete:
+      tags:
+        - SearchConfigInternal
+      summary: Deletes the search config.
+      description: Deletes the search config.
+      operationId: deleteSearchConfig
+      parameters:
+        - name: configId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Config deleted
+        "400":
+          description: Internal Server Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
+components:
+  schemas:
+    OffsetDateTime:
+      format: date-time
+      type: string
+      example: 2022-03-10T12:15:50-04:00
+    SearchConfig:
+      type: object
+      properties:
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+        id:
+          type: string
+        appId:
+          type: string
+        page:
+          type: string
+        name:
+          type: string
+        productName:
+          type: string
+        apiVersion:
+          type: string
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
+        modificationCount:
+          format: int32
+          type: integer
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        readOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        advanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+    SearchConfigResult:
+      type: object
+      properties:
+        creationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        creationUser:
+          type: string
+        modificationDate:
+          $ref: '#/components/schemas/OffsetDateTime'
+        modificationUser:
+          type: string
+        id:
+          type: string
+        appId:
+          type: string
+        page:
+          type: string
+        name:
+          type: string
+        productName:
+          type: string
+        apiVersion:
+          type: string
+        modificationCount:
+          format: int32
+          type: integer
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        readOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        advanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+    CreateSearchConfigRequest:
+      type: object
+      required:
+        - productName
+        - page
+        - name
+        - appId
+        - columns
+        - values
+      properties:
+        productName:
+          type: string
+        page:
+          type: string
+        name:
+          type: string
+        appId:
+          type: string
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        readOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        advanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+        apiVersion:
+          type: string
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
+    SearchConfigSearchRequest:
+      type: object
+      properties:
+        productName:
+          type: string
+        name:
+          type: string
+        appId:
+          type: string
+        page:
+          type: string
+        pageNumber:
+          format: int32
+          description: The number of page.
+          default: 0
+          type: integer
+        pageSize:
+          format: int32
+          description: The size of page
+          default: 100
+          type: integer
+    UpdateSearchConfigRequest:
+      type: object
+      required:
+        - modificationCount
+      properties:
+        page:
+          type: string
+        name:
+          type: string
+        appId:
+          type: string
+        modificationCount:
+          type: integer
+        fieldListVersion:
+          type: integer
+          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
+        readOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        advanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
+    GetSearchConfigResponse:
+      type: object
+      properties:
+        configs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchConfigResult'
+    SearchPageResult:
+      type: object
+      properties:
+        totalElements:
+          format: int64
+          description: The total elements in the resource.
+          type: integer
+        number:
+          format: int32
+          type: integer
+        size:
+          format: int32
+          type: integer
+        totalPages:
+          format: int64
+          type: integer
+        stream:
+          type: array
+          items:
+            $ref: '#/components/schemas/SearchConfig'
+    ProblemDetailResponse:
+      type: object
+      properties:
+        errorCode:
+          type: string
+        detail:
+          type: string
+        params:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailParam'
+        invalidParams:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProblemDetailInvalidParam'
+    ProblemDetailParam:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+    ProblemDetailInvalidParam:
+      type: object
+      properties:
+        name:
+          type: string
+        message:
+          type: string
