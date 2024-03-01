@@ -53,12 +53,8 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
 
     @Override
     public Response deleteSearchConfig(String configId) {
-        SearchConfig searchConfig = searchConfigDAO.findById(configId);
-        if (searchConfig != null) {
-            searchConfigDAO.deleteQueryById(configId);
-            return Response.noContent().build();
-        }
-        return Response.status(NOT_FOUND).build();
+        searchConfigDAO.deleteQueryById(configId);
+        return Response.noContent().build();
     }
 
     @Override

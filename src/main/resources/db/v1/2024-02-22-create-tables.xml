@@ -27,12 +27,13 @@
             <column name="name" type="VARCHAR(255)"/>
             <column name="page" type="VARCHAR(255)"/>
             <column name="product_name" type="VARCHAR(255)"/>
-            <column name="tenant_id" type="VARCHAR(255)"/>
-            <column name="user_id" type="VARCHAR(255)"/>
+            <column name="tenant_id" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
             <column name="values" type="VARCHAR(255)"/>
         </createTable>
 
-        <addUniqueConstraint columnNames="name, page, appid, tenant_id" constraintName="ck_config" tableName="search_config"/>
+        <addUniqueConstraint columnNames="name, product_name, page, appid, tenant_id" constraintName="ck_config" tableName="search_config"/>
 
     </changeSet>
 

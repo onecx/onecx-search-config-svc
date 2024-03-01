@@ -255,7 +255,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
                 .contentType(APPLICATION_JSON)
                 .delete(configId)
                 .then()
-                .statusCode(NOT_FOUND.getStatusCode());
+                .statusCode(NO_CONTENT.getStatusCode());
     }
 
     @Test
@@ -388,11 +388,10 @@ class SearchConfigControllerV1Test extends AbstractTest {
                 .body()
                 .as(SearchPageResultDTOV1.class);
 
-        assertThat(responseDTO.getStream()).hasSize(8);
+        assertThat(responseDTO.getStream()).hasSize(7);
     }
 
     @Test
-    @WithDBData(value = { "search-config-data.xml" }, deleteBeforeInsert = true, deleteAfterTest = true)
     void shouldNotFindByCriteriaNullCriteria() {
         var response = given()
                 .contentType(APPLICATION_JSON)

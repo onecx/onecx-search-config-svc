@@ -15,7 +15,7 @@ import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
-public class SearchConfigDAOTest extends AbstractTest {
+class SearchConfigDAOTest extends AbstractTest {
 
     @Inject
     SearchConfigDAO dao;

@@ -20,7 +20,7 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 @TestHTTPEndpoint(SearchConfigControllerInternal.class)
 @WithDBData(value = "search-config-data.xml", deleteBeforeInsert = true, deleteAfterTest = true, rinseAndRepeat = true)
-class SearchConfigControllerInternalTest extends AbstractTest {
+class SearchConfigControllerInternalTenantTest extends AbstractTest {
 
     private Map<String, String> setupValues() {
         Map<String, String> values = new HashMap<>();
@@ -44,6 +44,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
 
         var dto = given()
                 .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org1", null))
                 .get(configId)
                 .then()
                 .statusCode(OK.getStatusCode())
@@ -52,14 +53,10 @@ class SearchConfigControllerInternalTest extends AbstractTest {
 
         assertThat(dto).isNotNull();
         assertThat(dto.getAppId()).isEqualTo("support-tool-ui");
-    }
-
-    @Test
-    void shouldNotGetSearchConfigsById() {
-        String configId = "not-exists";
 
         given()
                 .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org2", null))
                 .get(configId)
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
@@ -67,8 +64,8 @@ class SearchConfigControllerInternalTest extends AbstractTest {
 
     @Test
     void shouldCreateSearchConfig() {
-        String productName = "productName1";
-        String application = "support-tool-ui";
+        String productName = "productTest1";
+        String application = "test-tool-ui";
         String name = "criteria-name";
         String page = "criteria-page";
 
@@ -87,6 +84,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
                 .when()
                 .contentType(APPLICATION_JSON)
                 .body(requestBody)
+                .header(APM_HEADER_PARAM, createToken("org2", null))
                 .post()
                 .then()
                 .statusCode(CREATED.getStatusCode())
@@ -100,48 +98,25 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         assertThat(requestBody.getPage()).isEqualTo(searchConfigDTO.getPage());
         assertThat(requestBody.getColumns()).isEqualTo(searchConfigDTO.getColumns());
         assertThat(requestBody.getValues()).isEqualTo(searchConfigDTO.getValues());
-    }
 
-    @Test
-    void shouldNotCreateSearchConfigDuplicate() {
-        String productName = "productName1";
-        String application = "support-tool-ui";
-        String name = "test";
-        String page = "page1";
-
-        CreateSearchConfigRequestDTO requestBody = new CreateSearchConfigRequestDTO();
-        requestBody.setAppId(application);
-        requestBody.setName(name);
-        requestBody.setPage(page);
-        requestBody.setProductName(productName);
-        requestBody.values(setupValues());
-        requestBody.setColumns(setupColumns());
-        requestBody.setFieldListVersion(1);
-        requestBody.setReadOnly(true);
-        requestBody.setAdvanced(false);
-
-        var error = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(requestBody)
-                .post()
-                .then()
-                .statusCode(BAD_REQUEST.getStatusCode())
-                .extract()
-                .body()
-                .as(ProblemDetailResponseDTO.class);
-
-        assertThat(error.getErrorCode()).isEqualTo("PERSIST_ENTITY_FAILED");
-    }
-
-    @Test
-    void shouldNotCreateSearchConfig() {
         given()
-                .when()
                 .contentType(APPLICATION_JSON)
-                .post()
+                .header(APM_HEADER_PARAM, createToken("org1", null))
+                .get(searchConfigDTO.getId())
                 .then()
-                .statusCode(BAD_REQUEST.getStatusCode());
+                .statusCode(NOT_FOUND.getStatusCode());
+
+        var dto = given()
+                .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org2", null))
+                .get(searchConfigDTO.getId())
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .body().as(SearchConfigDTO.class);
+
+        assertThat(dto).isNotNull();
+        assertThat(dto.getAppId()).isEqualTo(requestBody.getAppId());
     }
 
     @Test
@@ -158,9 +133,19 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         updateRequestBody.setPage(page);
         updateRequestBody.setModificationCount(0);
 
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org2", null))
+                .body(updateRequestBody)
+                .put(searchConfigId)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
+
         var searchConfigDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org1", null))
                 .body(updateRequestBody)
                 .put(searchConfigId)
                 .then()
@@ -177,99 +162,53 @@ class SearchConfigControllerInternalTest extends AbstractTest {
     }
 
     @Test
-    void shouldNotUpdateSearchConfigWhenBadRequest() {
-        String configId = "1";
-
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .put(configId)
-                .then()
-                .statusCode(BAD_REQUEST.getStatusCode());
-
-    }
-
-    @Test
-    void shouldNotUpdateSearchConfigNotExists() {
-        String searchConfigId = "NotExists";
-
-        String application = "support-tool-ui";
-        String name = "criteria-name";
-        String page = "criteria-page";
-
-        UpdateSearchConfigRequestDTO updateRequestBody = new UpdateSearchConfigRequestDTO();
-        updateRequestBody.setAppId(application);
-        updateRequestBody.setName(name);
-        updateRequestBody.setPage(page);
-        updateRequestBody.setModificationCount(0);
-
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(updateRequestBody)
-                .put(searchConfigId)
-                .then()
-                .statusCode(NOT_FOUND.getStatusCode());
-    }
-
-    @Test
-    void shouldNotUpdateSearchConfigOptLock() {
-        String searchConfigId = "1";
-
-        String application = "support-tool-ui";
-        String name = "criteria-name";
-        String page = "criteria-page";
-
-        UpdateSearchConfigRequestDTO updateRequestBody = new UpdateSearchConfigRequestDTO();
-        updateRequestBody.setAppId(application);
-        updateRequestBody.setName(name);
-        updateRequestBody.setPage(page);
-        updateRequestBody.setModificationCount(0);
-
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(updateRequestBody)
-                .put(searchConfigId)
-                .then()
-                .statusCode(OK.getStatusCode());
-
-        var error = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(updateRequestBody)
-                .put(searchConfigId)
-                .then()
-                .statusCode(BAD_REQUEST.getStatusCode())
-                .extract().as(ProblemDetailResponseDTO.class);
-
-        assertThat(error.getErrorCode()).isEqualTo("OPTIMISTIC_LOCK");
-    }
-
-    @Test
     void shouldDeleteById() {
         String configId = "1";
 
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org2", null))
                 .delete(configId)
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
+
+        given()
+                .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org1", null))
+                .get(configId)
+                .then()
+                .statusCode(OK.getStatusCode());
+
+        given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org1", null))
+                .delete(configId)
+                .then()
+                .statusCode(NO_CONTENT.getStatusCode());
+
+        given()
+                .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org1", null))
+                .get(configId)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
 
     }
 
     @Test
     void shouldFindByCriteria() {
-        String application = "support-tool-ui";
+        String application = "task-list-ui";
         SearchConfigSearchRequestDTO requestBody = new SearchConfigSearchRequestDTO();
         requestBody.setAppId(application);
 
-        String[] expectedIds = { "1", "2", "3", "4" };
+        String[] expectedIds = { "8" };
 
         var responseDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org2", null))
                 .body(requestBody)
                 .post("/search")
                 .then()
@@ -279,7 +218,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
                 .as(SearchPageResultDTO.class);
 
         List<SearchConfigDTO> configs = responseDTO.getStream();
-        assertThat(responseDTO.getTotalElements()).isEqualTo(4);
+        assertThat(responseDTO.getTotalElements()).isEqualTo(1);
 
         List<String> searchConfigApplications = configs.stream()
                 .map(SearchConfigDTO::getAppId)
@@ -292,51 +231,4 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         assertThat(configIds).containsAll(Arrays.asList(expectedIds));
     }
 
-    @Test
-    void shouldFindByCriteriaNoMatch() {
-        String application = "no-match-app";
-        SearchConfigSearchRequestDTO requestBody = new SearchConfigSearchRequestDTO();
-        requestBody.setAppId(application);
-
-        var responseDTO = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(requestBody)
-                .post("/search")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .extract()
-                .body()
-                .as(SearchPageResultDTO.class);
-
-        assertThat(responseDTO.getTotalElements()).isZero();
-    }
-
-    @Test
-    void shouldFindAllByCriteriaEmpty() {
-        SearchConfigSearchRequestDTO searchConfigSearchCriteria = new SearchConfigSearchRequestDTO();
-
-        var responseDTO = given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .body(searchConfigSearchCriteria)
-                .post("/search")
-                .then()
-                .statusCode(OK.getStatusCode())
-                .extract()
-                .body()
-                .as(SearchPageResultDTO.class);
-
-        assertThat(responseDTO.getTotalElements()).isEqualTo(7);
-    }
-
-    @Test
-    void shouldNotFindByCriteriaNullCriteria() {
-        given()
-                .when()
-                .contentType(APPLICATION_JSON)
-                .post()
-                .then()
-                .statusCode(BAD_REQUEST.getStatusCode());
-    }
 }
