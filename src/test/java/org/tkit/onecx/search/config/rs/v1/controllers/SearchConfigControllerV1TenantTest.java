@@ -1,4 +1,4 @@
-package org.tkit.onecx.search.config.v1;
+package org.tkit.onecx.search.config.rs.v1.controllers;
 
 import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -9,7 +9,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
-import org.tkit.onecx.search.config.rs.v1.controller.SearchConfigControllerV1;
 import org.tkit.onecx.search.config.test.AbstractTest;
 import org.tkit.quarkus.test.WithDBData;
 
@@ -39,36 +38,6 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
     }
 
     @Test
-    void shouldGetSearchConfigsByPage() {
-
-        String productName = "productName1";
-        String application = "support-tool-ui";
-        String page = "page1";
-
-        var responseDTO = given()
-                .contentType(APPLICATION_JSON)
-                .header(APM_HEADER_PARAM, createToken("org2", null))
-                .get("/" + productName + "/" + application + "/" + page)
-                .then()
-                .statusCode(OK.getStatusCode())
-                .extract()
-                .body().as(SearchPageResultDTOV1.class);
-
-        assertThat(responseDTO.getTotalElements()).isZero();
-
-        responseDTO = given()
-                .contentType(APPLICATION_JSON)
-                .header(APM_HEADER_PARAM, createToken("org1", null))
-                .get("/" + productName + "/" + application + "/" + page)
-                .then()
-                .statusCode(OK.getStatusCode())
-                .extract()
-                .body().as(SearchPageResultDTOV1.class);
-
-        assertThat(responseDTO.getTotalElements()).isEqualTo(2);
-    }
-
-    @Test
     void shouldCreateSearchConfig() {
         String productName = "productName1";
         String application = "support-tool-ui";
@@ -94,29 +63,28 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
                 .then()
                 .statusCode(CREATED.getStatusCode())
                 .extract()
-                .body().as(SearchConfigDTOV1.class);
+                .body().as(CreateSearchConfigResponseDTOV1.class);
 
-        var dto = given()
-                .contentType(APPLICATION_JSON)
-                .header(APM_HEADER_PARAM, createToken("org1", null))
-                .get("/" + productName + "/" + application + "/" + page)
-                .then()
-                .statusCode(OK.getStatusCode())
-                .extract()
-                .body().as(SearchPageResultDTOV1.class);
+        assertThat(searchConfigDTOV1).isNotNull();
 
-        assertThat(dto.getTotalElements()).isZero();
+        var requestBody = new SearchConfigSearchRequestDTOV1()
+                .productName(newSearchConfig.getProductName())
+                .appId(newSearchConfig.getAppId())
+                .page(newSearchConfig.getPage());
 
-        dto = given()
+        var responseDTO = given()
                 .contentType(APPLICATION_JSON)
                 .header(APM_HEADER_PARAM, createToken("org2", null))
-                .get("/" + productName + "/" + application + "/" + page)
+                .body(requestBody)
+                .post("/search")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract()
-                .body().as(SearchPageResultDTOV1.class);
+                .body()
+                .as(SearchConfigSearchPageResultDTOV1.class);
 
-        assertThat(dto.getTotalElements()).isEqualTo(1);
+        assertThat(responseDTO).isNotNull();
+        assertThat(responseDTO.getStream()).isNotNull().isNotEmpty().hasSize(1);
 
     }
 
@@ -130,6 +98,7 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
 
         UpdateSearchConfigRequestDTOV1 updateRequestBody = new UpdateSearchConfigRequestDTOV1();
         updateRequestBody.setAppId(application);
+        updateRequestBody.setProductName("productName1");
         updateRequestBody.setName(name);
         updateRequestBody.setPage(page);
         updateRequestBody.setModificationCount(0);
@@ -153,13 +122,15 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
                 .statusCode(OK.getStatusCode())
                 .extract()
                 .body()
-                .as(SearchConfigDTOV1.class);
+                .as(UpdateSearchConfigResponseDTOV1.class);
 
-        assertThat(searchConfigDTO.getId()).isEqualTo(searchConfigId);
-        assertThat(searchConfigDTO.getAppId()).isEqualTo(updateRequestBody.getAppId());
-        assertThat(searchConfigDTO.getName()).isEqualTo(updateRequestBody.getName());
-        assertThat(searchConfigDTO.getPage()).isEqualTo(updateRequestBody.getPage());
-        assertThat(searchConfigDTO.getModificationCount()).isEqualTo(1);
+        assertThat(searchConfigDTO).isNotNull();
+        assertThat(searchConfigDTO.getConfig()).isNotNull();
+        assertThat(searchConfigDTO.getConfig().getName()).isEqualTo(name);
+        assertThat(searchConfigDTO.getConfig().getAppId()).isEqualTo(updateRequestBody.getAppId());
+        assertThat(searchConfigDTO.getConfig().getName()).isEqualTo(updateRequestBody.getName());
+        assertThat(searchConfigDTO.getConfig().getPage()).isEqualTo(updateRequestBody.getPage());
+        assertThat(searchConfigDTO.getConfig().getModificationCount()).isEqualTo(1);
     }
 
     @Test
@@ -178,16 +149,24 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
         String application = "task-list-ui";
         String page = "task-page2";
 
+        var requestBody = new SearchConfigSearchRequestDTOV1()
+                .productName(productName)
+                .appId(application)
+                .page(page);
+
         var responseDTO = given()
                 .contentType(APPLICATION_JSON)
                 .header(APM_HEADER_PARAM, createToken("org2", null))
-                .get("/" + productName + "/" + application + "/" + page)
+                .body(requestBody)
+                .post("/search")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract()
-                .body().as(SearchPageResultDTOV1.class);
+                .body()
+                .as(SearchConfigSearchPageResultDTOV1.class);
 
-        assertThat(responseDTO.getTotalElements()).isEqualTo(1);
+        assertThat(responseDTO).isNotNull();
+        assertThat(responseDTO.getStream()).isNotNull().isNotEmpty().hasSize(1);
 
         given()
                 .when()
@@ -200,23 +179,26 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
         responseDTO = given()
                 .contentType(APPLICATION_JSON)
                 .header(APM_HEADER_PARAM, createToken("org2", null))
-                .get("/" + productName + "/" + application + "/" + page)
+                .body(requestBody)
+                .post("/search")
                 .then()
                 .statusCode(OK.getStatusCode())
                 .extract()
-                .body().as(SearchPageResultDTOV1.class);
+                .body()
+                .as(SearchConfigSearchPageResultDTOV1.class);
 
-        assertThat(responseDTO.getTotalElements()).isZero();
+        assertThat(responseDTO).isNotNull();
+        assertThat(responseDTO.getStream()).isNotNull().isEmpty();
 
     }
 
     @Test
     void shouldFindByCriteria() {
         String application = "task-list-ui";
-        SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
-        requestBody.setAppId(application);
+        var requestBody = new SearchConfigSearchRequestDTOV1()
+                .appId(application).page("task-page2").productName("productName3");
 
-        String[] expectedIds = { "8" };
+        String[] expectedIds = { "name3" };
 
         var responseDTO = given()
                 .contentType(APPLICATION_JSON)
@@ -227,19 +209,15 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
                 .statusCode(OK.getStatusCode())
                 .extract()
                 .body()
-                .as(SearchPageResultDTOV1.class);
+                .as(SearchConfigSearchPageResultDTOV1.class);
 
-        List<SearchConfigDTOV1> configs = responseDTO.getStream();
+        assertThat(responseDTO).isNotNull();
+        assertThat(responseDTO.getStream()).isNotNull().isNotEmpty().hasSize(1);
 
-        assertThat(configs.size()).isSameAs(1);
-
-        List<String> searchConfigApplications = configs.stream()
-                .map(SearchConfigDTOV1::getAppId)
-                .collect(Collectors.toList());
-        assertThat(searchConfigApplications).contains(application);
+        List<SearchConfigSearchResultDTOV1> configs = responseDTO.getStream();
 
         List<String> configIds = configs.stream()
-                .map(SearchConfigDTOV1::getId)
+                .map(SearchConfigSearchResultDTOV1::getName)
                 .collect(Collectors.toList());
         assertThat(configIds).containsAll(Arrays.asList(expectedIds));
     }

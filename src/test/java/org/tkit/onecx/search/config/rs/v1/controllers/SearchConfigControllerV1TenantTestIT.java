@@ -1,4 +1,4 @@
-package org.tkit.onecx.search.config.v1;
+package org.tkit.onecx.search.config.rs.v1.controllers;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 

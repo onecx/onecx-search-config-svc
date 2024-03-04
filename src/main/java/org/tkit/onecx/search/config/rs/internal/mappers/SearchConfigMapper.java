@@ -1,4 +1,4 @@
-package org.tkit.onecx.search.config.rs.internal.mapper;
+package org.tkit.onecx.search.config.rs.internal.mappers;
 
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import gen.org.tkit.onecx.search.config.rs.internal.model.*;
 
 @Mapper(uses = OffsetDateTimeMapper.class)
-public abstract class SearchConfigMapper {
+public interface SearchConfigMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "modificationCount", ignore = true)
@@ -29,9 +29,10 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "tenantId", ignore = true)
     @Mapping(target = "controlTraceabilityManual", ignore = true)
     @Mapping(target = "persisted", ignore = true)
-    public abstract SearchConfig create(CreateSearchConfigRequestDTO dto);
+    @Mapping(target = "configId", ignore = true)
+    SearchConfig create(CreateSearchConfigRequestDTO dto);
 
-    public String map(Map<String, String> values) throws JsonProcessingException {
+    default String map(Map<String, String> values) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(values);
 
@@ -45,23 +46,23 @@ public abstract class SearchConfigMapper {
     @Mapping(target = "tenantId", ignore = true)
     @Mapping(target = "controlTraceabilityManual", ignore = true)
     @Mapping(target = "persisted", ignore = true)
-    @Mapping(target = "apiVersion", ignore = true)
     @Mapping(target = "productName", ignore = true)
-    public abstract SearchConfig update(@MappingTarget SearchConfig searchConfig, UpdateSearchConfigRequestDTO dto);
+    @Mapping(target = "configId", ignore = true)
+    void update(@MappingTarget SearchConfig searchConfig, UpdateSearchConfigRequestDTO dto);
 
-    public String map(List<String> value) throws JsonProcessingException {
+    default String map(List<String> value) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         return mapper.writeValueAsString(value);
     }
 
-    public List<String> map(String value) throws JsonProcessingException {
+    default List<String> map(String value) throws JsonProcessingException {
         List<String> columns;
         ObjectMapper mapper = new ObjectMapper();
         columns = mapper.readValue(value, List.class);
         return columns;
     }
 
-    public Map<String, String> mapValues(String value) throws JsonProcessingException {
+    default Map<String, String> mapValues(String value) throws JsonProcessingException {
         Map<String, String> values;
 
         ObjectMapper mapper = new ObjectMapper();
@@ -70,13 +71,13 @@ public abstract class SearchConfigMapper {
         return values;
     }
 
-    public abstract SearchConfigCriteria map(SearchConfigSearchRequestDTO configSearchRequestDTO);
+    SearchConfigCriteria map(SearchConfigSearchRequestDTO configSearchRequestDTO);
 
     @Mapping(target = "removeStreamItem", ignore = true)
-    public abstract SearchPageResultDTO map(PageResult<SearchConfig> page);
+    SearchConfigPageResultDTO map(PageResult<SearchConfig> page);
 
     @Mapping(target = "removeColumnsItem", ignore = true)
     @Mapping(target = "removeValuesItem", ignore = true)
-    public abstract SearchConfigDTO map(SearchConfig searchConfig);
+    SearchConfigDTO map(SearchConfig searchConfig);
 
 }

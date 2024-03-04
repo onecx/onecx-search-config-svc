@@ -19,7 +19,7 @@
             <column name="guid" type="VARCHAR(255)">
                 <constraints nullable="false" primaryKey="true" primaryKeyName="search_config_pkey"/>
             </column>
-            <column name="api_version" type="VARCHAR(255)"/>
+            <column name="config_id" type="VARCHAR(255)"/>
             <column name="appid" type="VARCHAR(255)"/>
             <column name="columns" type="VARCHAR(255)"/>
             <column name="creationuser" type="VARCHAR(255)"/>
@@ -33,6 +33,7 @@
             <column name="values" type="VARCHAR(255)"/>
         </createTable>
 
+        <addUniqueConstraint columnNames="config_id" constraintName="search_config_id" tableName="search_config"/>
         <addUniqueConstraint columnNames="name, product_name, page, appid, tenant_id" constraintName="ck_config" tableName="search_config"/>
 
     </changeSet>

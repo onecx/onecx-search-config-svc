@@ -30,10 +30,12 @@ class SearchConfigDAOTest extends AbstractTest {
 
     @Test
     void findSearchConfigByCriteriaTest() {
+        methodExceptionTests(() -> dao.findByConfigId(null),
+                SearchConfigDAO.ErrorKeys.FIND_SEARCH_CONFIG_BY_CONFIG_ID_FAILED);
         methodExceptionTests(() -> dao.findBySearchCriteria(null),
                 SearchConfigDAO.ErrorKeys.FIND_SEARCH_CONFIGS_BY_CRITERIA_FAILED);
         methodExceptionTests(() -> dao.findById(null),
-                SearchConfigDAO.ErrorKeys.FIND_ENTITY_BY_ID_FAILED);
+                SearchConfigDAO.ErrorKeys.FIND_SEARCH_CONFIG_BY_ID_FAILED);
     }
 
     void methodExceptionTests(Executable fn, Enum<?> key) {

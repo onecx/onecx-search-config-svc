@@ -191,6 +191,7 @@
               <inputSpec>src/main/openapi/search-config-openapi-v1.yaml</inputSpec>
               <apiPackage>gen.org.tkit.onecx.search.config.v1</apiPackage>
               <modelPackage>gen.org.tkit.onecx.search.config.v1.model</modelPackage>
+              <apiNameSuffix>V1Api</apiNameSuffix>
               <modelNameSuffix>DTOV1</modelNameSuffix>
               <skipValidateSpec>true</skipValidateSpec>
             </configuration>

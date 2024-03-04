@@ -1,4 +1,4 @@
-package org.tkit.onecx.search.config.rs.internal.controller;
+package org.tkit.onecx.search.config.rs.internal.controllers;
 
 import static org.jboss.resteasy.reactive.RestResponse.StatusCode.NOT_FOUND;
 
@@ -15,9 +15,8 @@ import jakarta.ws.rs.core.UriInfo;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import org.tkit.onecx.search.config.domain.daos.SearchConfigDAO;
-import org.tkit.onecx.search.config.domain.models.SearchConfig;
-import org.tkit.onecx.search.config.rs.internal.mapper.ExceptionMapper;
-import org.tkit.onecx.search.config.rs.internal.mapper.SearchConfigMapper;
+import org.tkit.onecx.search.config.rs.internal.mappers.ExceptionMapper;
+import org.tkit.onecx.search.config.rs.internal.mappers.SearchConfigMapper;
 import org.tkit.quarkus.jpa.exceptions.ConstraintException;
 
 import gen.org.tkit.onecx.search.config.rs.internal.SearchConfigInternalApi;
@@ -30,58 +29,59 @@ import lombok.extern.slf4j.Slf4j;
 public class SearchConfigControllerInternal implements SearchConfigInternalApi {
 
     @Inject
-    SearchConfigMapper searchConfigMapper;
+    SearchConfigMapper mapper;
 
     @Inject
     ExceptionMapper exceptionMapper;
 
     @Inject
-    SearchConfigDAO searchConfigDAO;
+    SearchConfigDAO dao;
 
     @Context
     UriInfo uriInfo;
 
     @Override
-    public Response createSearchConfig(CreateSearchConfigRequestDTO createSearchConfigRequestDTO) {
-        var searchConfig = searchConfigMapper.create(createSearchConfigRequestDTO);
-        var responseSearchConfig = searchConfigDAO.create(searchConfig);
+    public Response createConfig(CreateSearchConfigRequestDTO createSearchConfigRequestDTO) {
+        var searchConfig = mapper.create(createSearchConfigRequestDTO);
+        var responseSearchConfig = dao.create(searchConfig);
         return Response
                 .created(uriInfo.getAbsolutePathBuilder().path(responseSearchConfig.getId()).build())
-                .entity(searchConfigMapper.map(responseSearchConfig))
+                .entity(mapper.map(responseSearchConfig))
                 .build();
     }
 
     @Override
-    public Response deleteSearchConfig(String configId) {
-        searchConfigDAO.deleteQueryById(configId);
+    public Response deleteConfig(String id) {
+        dao.deleteQueryById(id);
         return Response.noContent().build();
     }
 
     @Override
     public Response findBySearchCriteria(SearchConfigSearchRequestDTO searchConfigSearchRequestDTO) {
-        var results = searchConfigDAO.findBySearchCriteria(searchConfigMapper.map(searchConfigSearchRequestDTO));
-        return Response.ok().entity(searchConfigMapper.map(results)).build();
+        var results = dao.findBySearchCriteria(mapper.map(searchConfigSearchRequestDTO));
+        return Response.ok().entity(mapper.map(results)).build();
     }
 
     @Override
-    public Response getSearchConfigById(String configId) {
-        var searchConfig = searchConfigDAO.findById(configId);
-        if (searchConfig != null) {
-            return Response.ok().entity(searchConfigMapper.map(searchConfig)).build();
+    public Response getConfigById(String id) {
+        var searchConfig = dao.findById(id);
+        if (searchConfig == null) {
+            return Response.status(NOT_FOUND).build();
         }
-        return Response.status(NOT_FOUND).build();
+        return Response.ok().entity(mapper.map(searchConfig)).build();
     }
 
     @Override
-    public Response updateSearchConfig(String configId,
+    public Response updateConfig(String configId,
             UpdateSearchConfigRequestDTO updateSearchConfigRequestDTO) {
-        var searchConfig = searchConfigDAO.findById(configId);
-        if (searchConfig != null) {
-            SearchConfig updatedSearchConfig = searchConfigDAO
-                    .update(searchConfigMapper.update(searchConfig, updateSearchConfigRequestDTO));
-            return Response.ok(searchConfigMapper.map(updatedSearchConfig)).build();
+        var searchConfig = dao.findById(configId);
+        if (searchConfig == null) {
+            return Response.status(NOT_FOUND).build();
         }
-        return Response.status(NOT_FOUND).build();
+
+        mapper.update(searchConfig, updateSearchConfigRequestDTO);
+        var updatedSearchConfig = dao.update(searchConfig);
+        return Response.ok(mapper.map(updatedSearchConfig)).build();
     }
 
     @ServerExceptionMapper

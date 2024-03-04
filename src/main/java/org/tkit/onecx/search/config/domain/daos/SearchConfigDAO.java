@@ -35,7 +35,21 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
         } catch (NoResultException nre) {
             return null;
         } catch (Exception e) {
-            throw new DAOException(ErrorKeys.FIND_ENTITY_BY_ID_FAILED, e, entityName, id);
+            throw new DAOException(ErrorKeys.FIND_SEARCH_CONFIG_BY_ID_FAILED, e, entityName, id);
+        }
+    }
+
+    public SearchConfig findByConfigId(Object configId) throws DAOException {
+        try {
+            var cb = this.getEntityManager().getCriteriaBuilder();
+            var cq = cb.createQuery(SearchConfig.class);
+            var root = cq.from(SearchConfig.class);
+            cq.where(cb.equal(root.get(SearchConfig_.CONFIG_ID), configId));
+            return this.getEntityManager().createQuery(cq).getSingleResult();
+        } catch (NoResultException nre) {
+            return null;
+        } catch (Exception e) {
+            throw new DAOException(ErrorKeys.FIND_SEARCH_CONFIG_BY_CONFIG_ID_FAILED, e, entityName, configId);
         }
     }
 
@@ -47,6 +61,8 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
             var searchConfigRoot = criteriaQuery.from(SearchConfig.class);
 
             List<Predicate> predicates = new ArrayList<>();
+            addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.CONFIG_ID),
+                    searchCriteria.getConfigId());
             addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.PRODUCT_NAME),
                     searchCriteria.getProductName());
             addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.APP_ID),
@@ -68,11 +84,10 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
     }
 
     public enum ErrorKeys {
-        /**
-         * The find search templates by criteria failed.
-         */
+
+        FIND_SEARCH_CONFIG_BY_CONFIG_ID_FAILED,
         FIND_SEARCH_CONFIGS_BY_CRITERIA_FAILED,
-        FIND_ENTITY_BY_ID_FAILED
+        FIND_SEARCH_CONFIG_BY_ID_FAILED
     }
 
 }
