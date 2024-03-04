@@ -3,15 +3,42 @@ info:
   title: onecx-search-config-svc-v1
   version: "1.0"
 servers:
-  - url: https://localhost:8080
+  - url: https://onecx-search-config-svc
 tags:
-  - name: SearchConfigV1
-    description: Search Config Service v1 RS API
+  - name: SearchConfig
+    description: Search Config Service v1 rest api
 paths:
+  /v1/searchConfig/:
+    post:
+      tags:
+        - SearchConfig
+      summary: Creates a new search config
+      description: Creates a new search config
+      operationId: createSearchConfig
+      requestBody:
+        description: Creates a new search config
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateSearchConfigRequest'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateSearchConfigResponse'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /v1/searchConfig/{configId}:
     put:
       tags:
-        - SearchConfigV1
+        - SearchConfig
       summary: Updates the search config
       description: Updates the search config
       operationId: updateSearchConfig
@@ -46,7 +73,7 @@ paths:
           description: Search-config not found
     delete:
       tags:
-        - SearchConfigV1
+        - SearchConfig
       summary: Deletes the search config
       description: Deletes the search config
       operationId: deleteSearchConfig
@@ -66,76 +93,13 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchConfig/{productName}/{appId}/{page}:
-    get:
-      tags:
-        - SearchConfigV1
-      summary: Gets the search configs for the specified page.
-      description: The search config for the page is returned.
-      operationId: getSearchConfigs
-      parameters:
-        - name: productName
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: appId
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: page
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SearchPageResult'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
-  /v1/searchConfig/:
-    post:
-      tags:
-        - SearchConfigV1
-      summary: Creates a new search config
-      description: Creates a new search config
-      operationId: createSearchConfig
-      requestBody:
-        description: Creates a new search config
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateSearchConfigRequest'
-        required: true
-      responses:
-        '201':
-          description: Created
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/CreateSearchConfigResponse'
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProblemDetailResponse'
   /v1/searchConfig/search:
     post:
       tags:
-        - SearchConfigV1
+        - SearchConfig
       summary: Finds search configs by criteria.
       description: The search configs are found by search criteria.
-      operationId: findBySearchCriteria
+      operationId: findSearchConfigsBySearchCriteria
       requestBody:
         required: true
         content:
@@ -148,7 +112,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/SearchPageResult'
+                $ref: '#/components/schemas/SearchConfigSearchPageResult'
         "400":
           description: Bad request
           content:
@@ -160,7 +124,7 @@ components:
     SearchConfig:
       type: object
       properties:
-        id:
+        configId:
           type: string
         page:
           type: string
@@ -171,8 +135,6 @@ components:
         modificationCount:
           type: integer
         appId:
-          type: string
-        apiVersion:
           type: string
         fieldListVersion:
           type: integer
@@ -209,8 +171,6 @@ components:
           type: string
         appId:
           type: string
-        apiVersion:
-          type: string
         fieldListVersion:
           type: integer
           description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
@@ -230,38 +190,19 @@ components:
             type: string
     CreateSearchConfigResponse:
       type: object
+      required:
+        - config
       properties:
-        productName:
-          type: string
-        page:
-          type: string
-        name:
-          type: string
-        appId:
-          type: string
-        apiVersion:
-          type: string
-        fieldListVersion:
-          type: integer
-          description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
-        readOnly:
-          type: boolean
-          description: Defines whether this config can be changed in the UI
-        advanced:
-          type: boolean
-          description: Indicates whether the advanced mode should be displayed
-        columns:
-          type: array
-          items:
-            type: string
-        values:
-          type: object
-          additionalProperties:
-            type: string
+        config:
+          $ref: '#/components/schemas/SearchConfig'
     UpdateSearchConfigRequest:
       type: object
       required:
         - modificationCount
+        - productName
+        - page
+        - name
+        - appId
       properties:
         page:
           type: string
@@ -273,8 +214,6 @@ components:
           type: string
         modificationCount:
           type: integer
-        apiVersion:
-          type: string
         fieldListVersion:
           type: integer
           description: Version increment of the fields in the UI which you should use when you are making incompatible changes to those fields.
@@ -301,10 +240,12 @@ components:
           $ref: '#/components/schemas/SearchConfig'
     SearchConfigSearchRequest:
       type: object
+      required:
+        - productName
+        - appId
+        - page
       properties:
         productName:
-          type: string
-        name:
           type: string
         appId:
           type: string
@@ -320,7 +261,7 @@ components:
           description: The size of page
           default: 100
           type: integer
-    SearchPageResult:
+    SearchConfigSearchPageResult:
       type: object
       properties:
         totalElements:
@@ -339,7 +280,14 @@ components:
         stream:
           type: array
           items:
-            $ref: '#/components/schemas/SearchConfig'
+            $ref: '#/components/schemas/SearchConfigSearchResult'
+    SearchConfigSearchResult:
+      type: object
+      properties:
+        configId:
+          type: string
+        name:
+          type: string
     ProblemDetailResponse:
       type: object
       properties:

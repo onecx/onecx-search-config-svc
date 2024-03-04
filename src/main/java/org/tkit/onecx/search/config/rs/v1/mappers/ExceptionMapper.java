@@ -1,4 +1,4 @@
-package org.tkit.onecx.search.config.rs.v1.mapper;
+package org.tkit.onecx.search.config.rs.v1.mappers;
 
 import java.util.List;
 import java.util.Map;

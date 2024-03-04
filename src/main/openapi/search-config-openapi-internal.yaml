@@ -14,7 +14,7 @@ paths:
         - SearchConfigInternal
       summary: Creates the search config.
       description: Creates the search config.
-      operationId: createSearchConfig
+      operationId: createConfig
       requestBody:
         required: true
         content:
@@ -53,22 +53,22 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetSearchConfigResponse'
+                $ref: '#/components/schemas/SearchConfigPageResult'
         "400":
           description: Bad request
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
-  /internal/searchConfig/{configId}:
+  /internal/searchConfig/{id}:
     get:
       tags:
         - SearchConfigInternal
       summary: Finds search configs by it's id.
       description: Gets the search config by it's id.
-      operationId: getSearchConfigById
+      operationId: getConfigById
       parameters:
-        - name: configId
+        - name: id
           in: path
           required: true
           schema:
@@ -87,9 +87,9 @@ paths:
         - SearchConfigInternal
       summary: Updates the search config.
       description: Updates the search config.
-      operationId: updateSearchConfig
+      operationId: updateConfig
       parameters:
-        - name: configId
+        - name: id
           in: path
           required: true
           schema:
@@ -120,9 +120,9 @@ paths:
         - SearchConfigInternal
       summary: Deletes the search config.
       description: Deletes the search config.
-      operationId: deleteSearchConfig
+      operationId: deleteConfig
       parameters:
-        - name: configId
+        - name: id
           in: path
           required: true
           schema:
@@ -155,6 +155,8 @@ components:
           type: string
         id:
           type: string
+        configId:
+          type: string
         appId:
           type: string
         page:
@@ -162,8 +164,6 @@ components:
         name:
           type: string
         productName:
-          type: string
-        apiVersion:
           type: string
         columns:
           type: array
@@ -198,6 +198,8 @@ components:
           type: string
         id:
           type: string
+        configId:
+          type: string
         appId:
           type: string
         page:
@@ -205,8 +207,6 @@ components:
         name:
           type: string
         productName:
-          type: string
-        apiVersion:
           type: string
         modificationCount:
           format: int32
@@ -247,8 +247,6 @@ components:
         advanced:
           type: boolean
           description: Indicates whether the advanced mode should be displayed
-        apiVersion:
-          type: string
         columns:
           type: array
           items:
@@ -260,6 +258,8 @@ components:
     SearchConfigSearchRequest:
       type: object
       properties:
+        configId:
+          type: string
         productName:
           type: string
         name:
@@ -289,6 +289,8 @@ components:
           type: string
         appId:
           type: string
+        productName:
+          type: string
         modificationCount:
           type: integer
         fieldListVersion:
@@ -308,14 +310,7 @@ components:
           type: object
           additionalProperties:
             type: string
-    GetSearchConfigResponse:
-      type: object
-      properties:
-        configs:
-          type: array
-          items:
-            $ref: '#/components/schemas/SearchConfigResult'
-    SearchPageResult:
+    SearchConfigPageResult:
       type: object
       properties:
         totalElements:
@@ -334,7 +329,7 @@ components:
         stream:
           type: array
           items:
-            $ref: '#/components/schemas/SearchConfig'
+            $ref: '#/components/schemas/SearchConfigResult'
     ProblemDetailResponse:
       type: object
       properties:
