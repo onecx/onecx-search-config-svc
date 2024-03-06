@@ -46,6 +46,9 @@ public interface SearchConfigMapper {
         return new CreateSearchConfigResponseDTOV1().config(map(searchConfig));
     }
 
+    @Mapping(target = "productName", ignore = true)
+    @Mapping(target = "page", ignore = true)
+    @Mapping(target = "appId", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modificationDate", ignore = true)
