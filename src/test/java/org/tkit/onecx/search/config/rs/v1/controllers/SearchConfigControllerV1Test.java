@@ -42,7 +42,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
 
     @Test
     void shouldGetSearchConfigsById() {
-        String configId = "1";
+        String configId = "c1";
 
         var dto = given()
                 .contentType(APPLICATION_JSON)
@@ -136,7 +136,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
 
     @Test
     void shouldUpdateModificationCount() {
-        String searchConfigId = "1";
+        String searchConfigId = "c1";
 
         String application = "support-tool-ui";
         String name = "criteria-name";
@@ -172,7 +172,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
 
     @Test
     void shouldUpdateModificationCountOptLock() {
-        String searchConfigId = "1";
+        String searchConfigId = "c1";
 
         String application = "support-tool-ui";
         String name = "criteria-name";
@@ -208,7 +208,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
 
     @Test
     void shouldNotUpdateSearchConfigWhenBadRequest() {
-        String configId = "1";
+        String configId = "c1";
 
         given()
                 .contentType(APPLICATION_JSON)
@@ -242,19 +242,37 @@ class SearchConfigControllerV1Test extends AbstractTest {
     }
 
     @Test
-    void shouldDeleteById() {
-        String configId = "1";
+    void shouldDeleteByConfigId() {
+        String configId = "c1";
+
+        given()
+                .contentType(APPLICATION_JSON)
+                .get(configId)
+                .then()
+                .statusCode(OK.getStatusCode());
 
         given()
                 .contentType(APPLICATION_JSON)
                 .delete(configId)
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
+
+        given()
+                .contentType(APPLICATION_JSON)
+                .get(configId)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
     void shouldNotDeleteWhenNotExists() {
         String configId = "NotExists";
+
+        given()
+                .contentType(APPLICATION_JSON)
+                .get(configId)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
 
         given()
                 .contentType(APPLICATION_JSON)
@@ -270,7 +288,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
         var requestBody = new SearchConfigSearchRequestDTOV1()
                 .productName("productName1").appId(application).page("page2");
 
-        String[] expectedIds = { "3", "4" };
+        String[] expectedIds = { "c3", "c4" };
 
         var responseDTO = given()
                 .contentType(APPLICATION_JSON)
@@ -344,7 +362,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
         assertThat(responseDTO.getStream()).isNotNull().isNotEmpty().hasSize(2);
         List<SearchConfigSearchResultDTOV1> configs = responseDTO.getStream();
 
-        assertThat(configs.stream().map(SearchConfigSearchResultDTOV1::getConfigId).toList()).contains("2", "1");
+        assertThat(configs.stream().map(SearchConfigSearchResultDTOV1::getConfigId).toList()).contains("c2", "c1");
     }
 
     @Test
