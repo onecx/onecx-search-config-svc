@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.tkit.onecx.search.config.test.AbstractTest;
 import org.tkit.quarkus.test.WithDBData;
 
+import gen.org.tkit.onecx.search.config.rs.internal.model.SearchConfigDTO;
 import gen.org.tkit.onecx.search.config.v1.model.*;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -35,6 +36,30 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
         columns.add("surname");
         columns.add("address");
         return columns;
+    }
+
+    @Test
+    void shouldGetSearchConfigsById() {
+        String configId = "1";
+
+        var dto = given()
+                .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org1", null))
+                .get(configId)
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .body().as(SearchConfigDTO.class);
+
+        assertThat(dto).isNotNull();
+        assertThat(dto.getAppId()).isEqualTo("support-tool-ui");
+
+        given()
+                .contentType(APPLICATION_JSON)
+                .header(APM_HEADER_PARAM, createToken("org2", null))
+                .get(configId)
+                .then()
+                .statusCode(NOT_FOUND.getStatusCode());
     }
 
     @Test
