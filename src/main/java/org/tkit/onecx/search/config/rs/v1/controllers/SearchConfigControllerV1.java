@@ -50,6 +50,15 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
     }
 
     @Override
+    public Response getConfigByConfigId(String configId) {
+        var searchConfig = dao.findByConfigId(configId);
+        if (searchConfig == null) {
+            return Response.status(NOT_FOUND).build();
+        }
+        return Response.ok().entity(mapper.map(searchConfig)).build();
+    }
+
+    @Override
     public Response deleteSearchConfig(String configId) {
         var data = dao.findByConfigId(configId);
         if (data != null) {
