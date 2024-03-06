@@ -40,7 +40,7 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
 
     @Test
     void shouldGetSearchConfigsById() {
-        String configId = "1";
+        String configId = "c1";
 
         var dto = given()
                 .contentType(APPLICATION_JSON)
@@ -115,7 +115,7 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
 
     @Test
     void shouldUpdateModificationCount() {
-        String searchConfigId = "1";
+        String searchConfigId = "c1";
 
         String application = "support-tool-ui";
         String name = "criteria-name";
@@ -159,8 +159,8 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
     }
 
     @Test
-    void shouldDeleteById() {
-        String configId = "8";
+    void shouldDeleteByConfigId() {
+        String configId = "c8";
 
         given()
                 .when()

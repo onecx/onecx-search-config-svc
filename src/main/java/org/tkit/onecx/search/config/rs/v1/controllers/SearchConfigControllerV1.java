@@ -62,7 +62,7 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
     public Response deleteSearchConfig(String configId) {
         var data = dao.findByConfigId(configId);
         if (data != null) {
-            dao.deleteQueryById(configId);
+            dao.deleteQueryById(data.getId());
         }
         return Response.noContent().build();
     }
@@ -75,7 +75,7 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
 
     @Override
     public Response updateSearchConfig(String configId, UpdateSearchConfigRequestDTOV1 updateSearchConfigRequestDTOV1) {
-        var searchConfig = dao.findById(configId);
+        var searchConfig = dao.findByConfigId(configId);
         if (searchConfig == null) {
             return Response.status(NOT_FOUND).build();
         }
