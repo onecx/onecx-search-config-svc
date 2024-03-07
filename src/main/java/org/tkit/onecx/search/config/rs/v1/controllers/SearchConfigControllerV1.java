@@ -2,13 +2,11 @@ package org.tkit.onecx.search.config.rs.v1.controllers;
 
 import static org.jboss.resteasy.reactive.RestResponse.StatusCode.NOT_FOUND;
 
+import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.OptimisticLockException;
 import jakarta.validation.ConstraintViolationException;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.Context;
-import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriInfo;
 
@@ -24,8 +22,7 @@ import gen.org.tkit.onecx.search.config.v1.model.*;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
-@Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
+@ApplicationScoped
 public class SearchConfigControllerV1 implements SearchConfigV1Api {
 
     @Inject
@@ -79,7 +76,6 @@ public class SearchConfigControllerV1 implements SearchConfigV1Api {
         if (searchConfig == null) {
             return Response.status(NOT_FOUND).build();
         }
-
         mapper.update(searchConfig, updateSearchConfigRequestDTOV1);
         var updatedSearchConfig = dao.update(searchConfig);
         return Response.ok(mapper.mapUpdate(updatedSearchConfig)).build();

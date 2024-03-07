@@ -220,19 +220,11 @@ components:
       type: object
       required:
         - modificationCount
-        - productName
-        - page
         - name
-        - appId
       properties:
-        page:
-          type: string
         name:
           type: string
-        appId:
-          type: string
-        productName:
-          type: string
+          minLength: 1
         modificationCount:
           type: integer
         fieldListVersion:

@@ -122,10 +122,7 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
         String page = "criteria-page";
 
         UpdateSearchConfigRequestDTOV1 updateRequestBody = new UpdateSearchConfigRequestDTOV1();
-        updateRequestBody.setAppId(application);
-        updateRequestBody.setProductName("productName1");
         updateRequestBody.setName(name);
-        updateRequestBody.setPage(page);
         updateRequestBody.setModificationCount(0);
 
         given()
@@ -152,9 +149,7 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
         assertThat(searchConfigDTO).isNotNull();
         assertThat(searchConfigDTO.getConfig()).isNotNull();
         assertThat(searchConfigDTO.getConfig().getName()).isEqualTo(name);
-        assertThat(searchConfigDTO.getConfig().getAppId()).isEqualTo(updateRequestBody.getAppId());
         assertThat(searchConfigDTO.getConfig().getName()).isEqualTo(updateRequestBody.getName());
-        assertThat(searchConfigDTO.getConfig().getPage()).isEqualTo(updateRequestBody.getPage());
         assertThat(searchConfigDTO.getConfig().getModificationCount()).isEqualTo(1);
     }
 

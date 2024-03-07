@@ -138,15 +138,10 @@ class SearchConfigControllerV1Test extends AbstractTest {
     void shouldUpdateModificationCount() {
         String searchConfigId = "c1";
 
-        String application = "support-tool-ui";
         String name = "criteria-name";
-        String page = "criteria-page";
 
         UpdateSearchConfigRequestDTOV1 updateRequestBody = new UpdateSearchConfigRequestDTOV1();
-        updateRequestBody.setProductName("productName1");
-        updateRequestBody.setAppId(application);
         updateRequestBody.setName(name);
-        updateRequestBody.setPage(page);
         updateRequestBody.setModificationCount(0);
 
         var searchConfigDTO = given()
@@ -163,9 +158,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
         assertThat(searchConfigDTO).isNotNull();
         assertThat(searchConfigDTO.getConfig()).isNotNull();
         assertThat(searchConfigDTO.getConfig().getConfigId()).isEqualTo(searchConfigId);
-        assertThat(searchConfigDTO.getConfig().getAppId()).isEqualTo(updateRequestBody.getAppId());
         assertThat(searchConfigDTO.getConfig().getName()).isEqualTo(updateRequestBody.getName());
-        assertThat(searchConfigDTO.getConfig().getPage()).isEqualTo(updateRequestBody.getPage());
         assertThat(searchConfigDTO.getConfig().getModificationCount()).isEqualTo(1);
 
     }
@@ -174,15 +167,10 @@ class SearchConfigControllerV1Test extends AbstractTest {
     void shouldUpdateModificationCountOptLock() {
         String searchConfigId = "c1";
 
-        String application = "support-tool-ui";
         String name = "criteria-name";
-        String page = "criteria-page";
 
         UpdateSearchConfigRequestDTOV1 updateRequestBody = new UpdateSearchConfigRequestDTOV1();
-        updateRequestBody.setProductName("productName1");
-        updateRequestBody.setAppId(application);
         updateRequestBody.setName(name);
-        updateRequestBody.setPage(page);
         updateRequestBody.setModificationCount(0);
 
         given()
@@ -221,15 +209,10 @@ class SearchConfigControllerV1Test extends AbstractTest {
     void shouldNotUpdateSearchConfigNotExists() {
         String searchConfigId = "NotExists";
 
-        String application = "support-tool-ui";
         String name = "criteria-name";
-        String page = "criteria-page";
 
         UpdateSearchConfigRequestDTOV1 updateRequestBody = new UpdateSearchConfigRequestDTOV1();
-        updateRequestBody.setProductName("productName1");
-        updateRequestBody.setAppId(application);
         updateRequestBody.setName(name);
-        updateRequestBody.setPage(page);
         updateRequestBody.setModificationCount(1);
 
         given()
