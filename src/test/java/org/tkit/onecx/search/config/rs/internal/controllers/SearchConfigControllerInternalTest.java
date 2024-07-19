@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.resteasy.reactive.RestResponse.Status.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.tkit.onecx.search.config.test.AbstractTest;
@@ -282,12 +281,12 @@ class SearchConfigControllerInternalTest extends AbstractTest {
 
         List<String> searchConfigApplications = configs.stream()
                 .map(SearchConfigResultDTO::getAppId)
-                .collect(Collectors.toList());
+                .toList();
         assertThat(searchConfigApplications).contains(application);
 
         List<String> configIds = configs.stream()
                 .map(SearchConfigResultDTO::getId)
-                .collect(Collectors.toList());
+                .toList();
         assertThat(configIds).containsAll(Arrays.asList(expectedIds));
     }
 

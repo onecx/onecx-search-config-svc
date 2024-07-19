@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.resteasy.reactive.RestResponse.Status.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.tkit.onecx.search.config.test.AbstractTest;
@@ -117,9 +116,7 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
     void shouldUpdateModificationCount() {
         String searchConfigId = "c1";
 
-        String application = "support-tool-ui";
         String name = "criteria-name";
-        String page = "criteria-page";
 
         UpdateSearchConfigRequestDTOV1 updateRequestBody = new UpdateSearchConfigRequestDTOV1();
         updateRequestBody.setName(name);
@@ -238,7 +235,7 @@ class SearchConfigControllerV1TenantTest extends AbstractTest {
 
         List<String> configIds = configs.stream()
                 .map(SearchConfigSearchResultDTOV1::getName)
-                .collect(Collectors.toList());
+                .toList();
         assertThat(configIds).containsAll(Arrays.asList(expectedIds));
     }
 }
