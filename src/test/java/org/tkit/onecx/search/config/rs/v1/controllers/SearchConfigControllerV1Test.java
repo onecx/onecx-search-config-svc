@@ -6,7 +6,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.resteasy.reactive.RestResponse.Status.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import org.junit.jupiter.api.Test;
 import org.tkit.onecx.search.config.test.AbstractTest;
@@ -289,7 +288,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
 
         List<String> configIds = configs.stream()
                 .map(SearchConfigSearchResultDTOV1::getConfigId)
-                .collect(Collectors.toList());
+                .toList();
         assertThat(configIds).containsAll(Arrays.asList(expectedIds));
     }
 
@@ -317,7 +316,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
 
         List<String> configIds = configs.stream()
                 .map(SearchConfigSearchResultDTOV1::getName)
-                .collect(Collectors.toList());
+                .toList();
         assertThat(configIds).containsAll(Arrays.asList(expectedIds));
     }
 
@@ -325,7 +324,6 @@ class SearchConfigControllerV1Test extends AbstractTest {
     void shouldFindOneResultByCriteria() {
         String application = "support-tool-ui";
         String page = "page1";
-        String name = "name1";
         SearchConfigSearchRequestDTOV1 requestBody = new SearchConfigSearchRequestDTOV1();
         requestBody.setProductName("productName1");
         requestBody.setAppId(application);
@@ -382,7 +380,7 @@ class SearchConfigControllerV1Test extends AbstractTest {
 
     @Test
     void shouldNotFindByCriteriaNullCriteria() {
-        var response = given()
+        given()
                 .contentType(APPLICATION_JSON)
                 .post("/search")
                 .then()

@@ -1,0 +1,8 @@
+include::onecx-search-config-svc-attributes.adoc[opts=optional]
+
+== onecx-search-config-svc
+
+include::docs.adoc[opts=optional]
+
+
+include::onecx-search-config-svc-docs.adoc[opts=optional]
