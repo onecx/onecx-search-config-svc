@@ -3,11 +3,13 @@ package org.tkit.onecx.search.config.rs.internal.mappers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.tkit.onecx.search.config.domain.criteria.SearchConfigCriteria;
+import org.tkit.onecx.search.config.domain.criteria.SearchConfigLoadCriteria;
 import org.tkit.onecx.search.config.domain.models.SearchConfig;
 import org.tkit.quarkus.jpa.daos.PageResult;
 import org.tkit.quarkus.rs.mappers.OffsetDateTimeMapper;
@@ -29,7 +31,6 @@ public interface SearchConfigMapper {
     @Mapping(target = "tenantId", ignore = true)
     @Mapping(target = "controlTraceabilityManual", ignore = true)
     @Mapping(target = "persisted", ignore = true)
-    @Mapping(target = "configId", ignore = true)
     SearchConfig create(CreateSearchConfigRequestDTO dto);
 
     default String map(Map<String, String> values) throws JsonProcessingException {
@@ -47,7 +48,6 @@ public interface SearchConfigMapper {
     @Mapping(target = "controlTraceabilityManual", ignore = true)
     @Mapping(target = "persisted", ignore = true)
     @Mapping(target = "productName", ignore = true)
-    @Mapping(target = "configId", ignore = true)
     void update(@MappingTarget SearchConfig searchConfig, UpdateSearchConfigRequestDTO dto);
 
     default String map(List<String> value) throws JsonProcessingException {
@@ -73,11 +73,24 @@ public interface SearchConfigMapper {
 
     SearchConfigCriteria map(SearchConfigSearchRequestDTO configSearchRequestDTO);
 
-    @Mapping(target = "removeStreamItem", ignore = true)
-    SearchConfigPageResultDTO map(PageResult<SearchConfig> page);
-
     @Mapping(target = "removeColumnsItem", ignore = true)
     @Mapping(target = "removeValuesItem", ignore = true)
     SearchConfigDTO map(SearchConfig searchConfig);
+
+    @Mapping(target = "removeStreamItem", ignore = true)
+    SearchConfigPageResultDTO map(PageResult<SearchConfig> page);
+
+    SearchConfigLoadCriteria map(SearchConfigLoadRequestDTO searchConfigLoadRequestDTO);
+
+    default List<SearchConfigLoadResultDTO> mapToSearchConfigLoadResultList(List<SearchConfig> searchConfigList) {
+
+        return searchConfigList.stream()
+                .map(this::mapToSearchConfigLoadResult)
+                .collect(Collectors.toList());
+    }
+
+    @Mapping(target = "removeColumnsItem", ignore = true)
+    @Mapping(target = "removeValuesItem", ignore = true)
+    SearchConfigLoadResultDTO mapToSearchConfigLoadResult(SearchConfig searchConfig);
 
 }

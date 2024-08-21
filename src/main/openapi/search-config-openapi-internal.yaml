@@ -60,6 +60,34 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
+  /internal/searchConfig/load:
+    post:
+      tags:
+        - SearchConfigInternal
+      summary: Finds search configs by product, app and page.
+      description: The search configs are found by the criteria product, app and page.
+      operationId: loadByProductAppAndPage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SearchConfigLoadRequest'
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/SearchConfigLoadResult'
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetailResponse'
   /internal/searchConfig/{id}:
     get:
       tags:
@@ -155,8 +183,6 @@ components:
           type: string
         id:
           type: string
-        configId:
-          type: string
         appId:
           type: string
         page:
@@ -197,8 +223,6 @@ components:
         modificationUser:
           type: string
         id:
-          type: string
-        configId:
           type: string
         appId:
           type: string
@@ -258,8 +282,6 @@ components:
     SearchConfigSearchRequest:
       type: object
       properties:
-        configId:
-          type: string
         productName:
           type: string
         name:
@@ -278,6 +300,19 @@ components:
           description: The size of page
           default: 100
           type: integer
+    SearchConfigLoadRequest:
+      type: object
+      required:
+        - productName
+        - appId
+        - page
+      properties:
+        productName:
+          type: string
+        appId:
+          type: string
+        page:
+          type: string
     UpdateSearchConfigRequest:
       type: object
       required:
@@ -330,6 +365,27 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/SearchConfigResult'
+    SearchConfigLoadResult:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        columns:
+          type: array
+          items:
+            type: string
+        values:
+          type: object
+          additionalProperties:
+            type: string
+        readOnly:
+          type: boolean
+          description: Defines whether this config can be changed in the UI
+        advanced:
+          type: boolean
+          description: Indicates whether the advanced mode should be displayed
     ProblemDetailResponse:
       type: object
       properties:

@@ -7,9 +7,11 @@ import java.util.List;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.Predicate;
 
 import org.tkit.onecx.search.config.domain.criteria.SearchConfigCriteria;
+import org.tkit.onecx.search.config.domain.criteria.SearchConfigLoadCriteria;
 import org.tkit.onecx.search.config.domain.models.SearchConfig;
 import org.tkit.onecx.search.config.domain.models.SearchConfig_;
 import org.tkit.quarkus.jpa.daos.AbstractDAO;
@@ -39,20 +41,6 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
         }
     }
 
-    public SearchConfig findByConfigId(Object configId) throws DAOException {
-        try {
-            var cb = this.getEntityManager().getCriteriaBuilder();
-            var cq = cb.createQuery(SearchConfig.class);
-            var root = cq.from(SearchConfig.class);
-            cq.where(cb.equal(root.get(SearchConfig_.CONFIG_ID), configId));
-            return this.getEntityManager().createQuery(cq).getSingleResult();
-        } catch (NoResultException nre) {
-            return null;
-        } catch (Exception e) {
-            throw new DAOException(ErrorKeys.FIND_SEARCH_CONFIG_BY_CONFIG_ID_FAILED, e, entityName, configId);
-        }
-    }
-
     public PageResult<SearchConfig> findBySearchCriteria(SearchConfigCriteria searchCriteria) {
 
         try {
@@ -61,8 +49,6 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
             var searchConfigRoot = criteriaQuery.from(SearchConfig.class);
 
             List<Predicate> predicates = new ArrayList<>();
-            addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.CONFIG_ID),
-                    searchCriteria.getConfigId());
             addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.PRODUCT_NAME),
                     searchCriteria.getProductName());
             addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.APP_ID),
@@ -83,10 +69,37 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
         }
     }
 
+    public List<SearchConfig> findByProductAppAndPage(SearchConfigLoadCriteria loadCriteria) {
+
+        try {
+            var criteriaBuilder = getEntityManager().getCriteriaBuilder();
+            var criteriaQuery = criteriaBuilder.createQuery(SearchConfig.class);
+            var searchConfigRoot = criteriaQuery.from(SearchConfig.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+            addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.PRODUCT_NAME),
+                    loadCriteria.getProductName());
+            addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.APP_ID),
+                    loadCriteria.getAppId());
+            addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.PAGE),
+                    loadCriteria.getPage());
+
+            if (!predicates.isEmpty()) {
+                criteriaQuery.where(predicates.toArray(new Predicate[] {}));
+            }
+
+            TypedQuery<SearchConfig> query = em.createQuery(criteriaQuery);
+            return query.getResultList();
+        } catch (Exception exception) {
+            throw new DAOException(ErrorKeys.FIND_SEARCH_CONFIGS_BY_PRODUCT_APP_PAGE_FAILED, exception);
+        }
+    }
+
     public enum ErrorKeys {
 
         FIND_SEARCH_CONFIG_BY_CONFIG_ID_FAILED,
         FIND_SEARCH_CONFIGS_BY_CRITERIA_FAILED,
+        FIND_SEARCH_CONFIGS_BY_PRODUCT_APP_PAGE_FAILED,
         FIND_SEARCH_CONFIG_BY_ID_FAILED
     }
 

@@ -1,7 +1,5 @@
 package org.tkit.onecx.search.config.domain.models;
 
-import java.util.UUID;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -16,14 +14,11 @@ import lombok.*;
 @Setter
 @Entity
 @Table(name = "search_config", uniqueConstraints = {
-        @UniqueConstraint(name = "search_config_id", columnNames = { "config_id" }),
-        @UniqueConstraint(name = "ck_config", columnNames = { "name", "product_name", "page", "appId", "tenant_id" })
+        @UniqueConstraint(name = "uc_search_config_product_app_page_name", columnNames = { "product_name", "appId", "page",
+                "name", "tenant_id" })
 })
 @SuppressWarnings("java:S2160")
 public class SearchConfig extends TraceableEntity {
-
-    @Column(name = "config_id")
-    private String configId = UUID.randomUUID().toString();
 
     @Column(name = "product_name")
     private String productName;

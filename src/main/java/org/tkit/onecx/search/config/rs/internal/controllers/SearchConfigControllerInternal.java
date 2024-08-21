@@ -63,6 +63,12 @@ public class SearchConfigControllerInternal implements SearchConfigInternalApi {
     }
 
     @Override
+    public Response loadByProductAppAndPage(SearchConfigLoadRequestDTO searchConfigLoadRequestDTO) {
+        var results = dao.findByProductAppAndPage(mapper.map(searchConfigLoadRequestDTO));
+        return Response.ok().entity(mapper.mapToSearchConfigLoadResultList(results)).build();
+    }
+
+    @Override
     public Response getConfigById(String id) {
         var searchConfig = dao.findById(id);
         if (searchConfig == null) {
