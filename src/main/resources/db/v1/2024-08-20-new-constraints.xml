@@ -22,4 +22,8 @@
         <modifyDataType tableName="search_config" columnName="values" newDataType="VARCHAR(1000)"/>
     </changeSet>
 
+    <changeSet id="4" author="quarkus">
+        <dropColumn columnName="config_id" tableName="search_config"/>
+    </changeSet>
+
 </databaseChangeLog>

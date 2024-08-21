@@ -30,13 +30,13 @@ public class SearchConfig extends TraceableEntity {
     private String appId;
     @Column
     private int fieldListVersion;
-    @Column
+    @Column(length = 1000)
     private String values;
     @Column(name = "read_only")
     private boolean readOnly;
     @Column(name = "advanced")
     private boolean advanced;
-    @Column(name = "columns")
+    @Column(name = "columns", length = 1000)
     private String columns;
     @TenantId
     @Column(name = "tenant_id")
