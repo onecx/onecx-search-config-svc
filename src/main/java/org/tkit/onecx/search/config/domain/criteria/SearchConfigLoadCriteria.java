@@ -5,12 +5,10 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SearchConfigCriteria {
+public class SearchConfigLoadCriteria {
 
     private String productName;
-    private String name;
     private String appId;
     private String page;
-    private Integer pageNumber;
-    private Integer pageSize;
+
 }
