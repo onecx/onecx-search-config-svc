@@ -375,7 +375,6 @@ class SearchConfigControllerInternalTest extends AbstractTest {
                 .body()
                 .as(List.class);
 
-
         assertThat(responseDTO.get(0)).isNotNull();
     }
 }
