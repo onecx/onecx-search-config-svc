@@ -4,11 +4,13 @@ import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.resteasy.reactive.RestResponse.Status.*;
+import static org.tkit.quarkus.security.test.SecurityTestUtils.getKeycloakClientToken;
 
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
 import org.tkit.onecx.search.config.test.AbstractTest;
+import org.tkit.quarkus.security.test.GenerateKeycloakClient;
 import org.tkit.quarkus.test.WithDBData;
 
 import gen.org.tkit.onecx.search.config.rs.internal.model.*;
@@ -18,6 +20,7 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 @TestHTTPEndpoint(SearchConfigControllerInternal.class)
 @WithDBData(value = "search-config-data.xml", deleteBeforeInsert = true, deleteAfterTest = true, rinseAndRepeat = true)
+@GenerateKeycloakClient(clientName = "testClient", scopes = "ocx-sc:all")
 class SearchConfigControllerInternalTenantTest extends AbstractTest {
 
     private Map<String, String> setupValues() {
@@ -42,6 +45,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
 
         var dto = given()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org1", null))
                 .get(configId)
                 .then()
@@ -54,6 +58,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
 
         given()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org2", null))
                 .get(configId)
                 .then()
@@ -81,6 +86,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
         var searchConfigDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(requestBody)
                 .header(APM_HEADER_PARAM, createToken("org2", null))
                 .post()
@@ -99,6 +105,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
 
         given()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org1", null))
                 .get(searchConfigDTO.getId())
                 .then()
@@ -106,6 +113,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
 
         var dto = given()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org2", null))
                 .get(searchConfigDTO.getId())
                 .then()
@@ -134,6 +142,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org2", null))
                 .body(updateRequestBody)
                 .put(searchConfigId)
@@ -143,6 +152,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
         var searchConfigDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org1", null))
                 .body(updateRequestBody)
                 .put(searchConfigId)
@@ -166,6 +176,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org2", null))
                 .delete(configId)
                 .then()
@@ -173,6 +184,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
 
         given()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org1", null))
                 .get(configId)
                 .then()
@@ -181,6 +193,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org1", null))
                 .delete(configId)
                 .then()
@@ -188,6 +201,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
 
         given()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org1", null))
                 .get(configId)
                 .then()
@@ -206,6 +220,7 @@ class SearchConfigControllerInternalTenantTest extends AbstractTest {
         var responseDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .header(APM_HEADER_PARAM, createToken("org2", null))
                 .body(requestBody)
                 .post("/search")

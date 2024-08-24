@@ -10,6 +10,8 @@ tags:
 paths:
   /internal/searchConfig:
     post:
+      security:
+        - oauth2: [ ocx-sc:all, ocx-sc:write ]
       tags:
         - SearchConfigInternal
       summary: Creates the search config.
@@ -36,6 +38,8 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /internal/searchConfig/search:
     post:
+      security:
+        - oauth2: [ ocx-sc:all, ocx-sc:read ]
       tags:
         - SearchConfigInternal
       summary: Finds search configs by criteria.
@@ -62,6 +66,8 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /internal/searchConfig/load:
     post:
+      security:
+        - oauth2: [ ocx-sc:all, ocx-sc:read ]
       tags:
         - SearchConfigInternal
       summary: Finds search configs by product, app and page.
@@ -90,6 +96,8 @@ paths:
                 $ref: '#/components/schemas/ProblemDetailResponse'
   /internal/searchConfig/{id}:
     get:
+      security:
+        - oauth2: [ ocx-sc:all, ocx-sc:read ]
       tags:
         - SearchConfigInternal
       summary: Finds search configs by it's id.
@@ -111,6 +119,8 @@ paths:
         "404":
           description: Not found
     put:
+      security:
+        - oauth2: [ ocx-sc:all, ocx-sc:write ]
       tags:
         - SearchConfigInternal
       summary: Updates the search config.
@@ -144,6 +154,8 @@ paths:
         "404":
           description: Search-config not found
     delete:
+      security:
+        - oauth2: [ ocx-sc:all, ocx-sc:delete ]
       tags:
         - SearchConfigInternal
       summary: Deletes the search config.
@@ -165,6 +177,17 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
 components:
+  securitySchemes:
+    oauth2:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: https://oauth.simple.api/token
+          scopes:
+            ocx-sc:all: Grants access to all operations
+            ocx-sc:read: Grants read access
+            ocx-sc:write: Grants write access
+            ocx-sc:delete: Grants access to delete operations
   schemas:
     OffsetDateTime:
       format: date-time

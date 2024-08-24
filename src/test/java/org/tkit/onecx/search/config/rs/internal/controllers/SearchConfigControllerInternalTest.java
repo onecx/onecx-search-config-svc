@@ -4,11 +4,13 @@ import static io.restassured.RestAssured.given;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.jboss.resteasy.reactive.RestResponse.Status.*;
+import static org.tkit.quarkus.security.test.SecurityTestUtils.getKeycloakClientToken;
 
 import java.util.*;
 
 import org.junit.jupiter.api.Test;
 import org.tkit.onecx.search.config.test.AbstractTest;
+import org.tkit.quarkus.security.test.GenerateKeycloakClient;
 import org.tkit.quarkus.test.WithDBData;
 
 import gen.org.tkit.onecx.search.config.rs.internal.model.*;
@@ -18,6 +20,7 @@ import io.quarkus.test.junit.QuarkusTest;
 @QuarkusTest
 @TestHTTPEndpoint(SearchConfigControllerInternal.class)
 @WithDBData(value = "search-config-data.xml", deleteBeforeInsert = true, deleteAfterTest = true, rinseAndRepeat = true)
+@GenerateKeycloakClient(clientName = "testClient", scopes = "ocx-sc:all")
 class SearchConfigControllerInternalTest extends AbstractTest {
 
     private Map<String, String> setupValues() {
@@ -42,6 +45,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
 
         var dto = given()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .get(configId)
                 .then()
                 .statusCode(OK.getStatusCode())
@@ -58,6 +62,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
 
         given()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .get(configId)
                 .then()
                 .statusCode(NOT_FOUND.getStatusCode());
@@ -84,6 +89,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var searchConfigDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(requestBody)
                 .post()
                 .then()
@@ -121,6 +127,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var error = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(requestBody)
                 .post()
                 .then()
@@ -137,6 +144,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .post()
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
@@ -159,6 +167,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var searchConfigDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(updateRequestBody)
                 .put(searchConfigId)
                 .then()
@@ -181,6 +190,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .put(configId)
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
@@ -204,6 +214,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(updateRequestBody)
                 .put(searchConfigId)
                 .then()
@@ -227,6 +238,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(updateRequestBody)
                 .put(searchConfigId)
                 .then()
@@ -235,6 +247,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var error = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(updateRequestBody)
                 .put(searchConfigId)
                 .then()
@@ -251,6 +264,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .delete(configId)
                 .then()
                 .statusCode(NO_CONTENT.getStatusCode());
@@ -268,6 +282,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var responseDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(requestBody)
                 .post("/search")
                 .then()
@@ -299,6 +314,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var responseDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(requestBody)
                 .post("/search")
                 .then()
@@ -317,6 +333,7 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         var responseDTO = given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .body(searchConfigSearchCriteria)
                 .post("/search")
                 .then()
@@ -333,8 +350,32 @@ class SearchConfigControllerInternalTest extends AbstractTest {
         given()
                 .when()
                 .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
                 .post()
                 .then()
                 .statusCode(BAD_REQUEST.getStatusCode());
+    }
+
+    @Test
+    void loadByProductAppAndProduct_shouldReturnSearchConfigLoadResultArray() {
+        SearchConfigLoadRequestDTO requestBody = new SearchConfigLoadRequestDTO();
+        requestBody.setAppId("support-tool-ui");
+        requestBody.setProductName("productName1");
+        requestBody.setPage("page1");
+
+        var responseDTO = given()
+                .when()
+                .contentType(APPLICATION_JSON)
+                .auth().oauth2(getKeycloakClientToken("testClient"))
+                .body(requestBody)
+                .post("/load")
+                .then()
+                .statusCode(OK.getStatusCode())
+                .extract()
+                .body()
+                .as(List.class);
+
+
+        assertThat(responseDTO.get(0)).isNotNull();
     }
 }
