@@ -27,6 +27,7 @@ onecx.permission.token.verified=true
 onecx.permission.token.issuer.public-key-location.suffix=/protocol/openid-connect/certs
 onecx.permission.token.issuer.public-key-location.enabled=false
 onecx.permission.token.claim.path=realm_access/roles
+%prod.quarkus.oidc-client.client-id=${quarkus.application.name}
 %prod.quarkus.datasource.jdbc.url=${DB_URL:jdbc:postgresql://localhost:5432/onecx-search-config?sslmode=disable}
 %prod.quarkus.datasource.username=${DB_USER:onecx-search-config}
 %prod.quarkus.datasource.password=${DB_PWD:onecx-search-config}
