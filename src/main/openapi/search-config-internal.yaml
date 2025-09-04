@@ -1,12 +1,13 @@
 openapi: "3.0.3"
 info:
-  title: onecx-search-config-svc
+  title: onecx-search-config internal service
+  description: This API provides endpoints to manage Search Configs
   version: "1.0"
 servers:
   - url: https://onecx-search-config-svc/
 tags:
   - name: SearchConfigInternal
-    description: Execute Search Config CRUD operations
+    description: Managing Search Configs
 paths:
   /internal/searchConfig:
     post:
@@ -14,8 +15,7 @@ paths:
         - oauth2: [ ocx-sc:all, ocx-sc:write ]
       tags:
         - SearchConfigInternal
-      summary: Creates the search config.
-      description: Creates the search config.
+      description: Create a new search config
       operationId: createConfig
       requestBody:
         required: true
@@ -25,7 +25,7 @@ paths:
               $ref: '#/components/schemas/CreateSearchConfigRequest'
       responses:
         "201":
-          description: Created
+          description: Search config created successfully
           content:
             application/json:
               schema:
@@ -42,8 +42,7 @@ paths:
         - oauth2: [ ocx-sc:all, ocx-sc:read ]
       tags:
         - SearchConfigInternal
-      summary: Finds search configs by criteria.
-      description: The search configs are found by search criteria.
+      description: Search for search configs by criteria
       operationId: findBySearchCriteria
       requestBody:
         required: true
@@ -53,7 +52,7 @@ paths:
               $ref: '#/components/schemas/SearchConfigSearchRequest'
       responses:
         "200":
-          description: OK
+          description: Search config search results retrieved successfully
           content:
             application/json:
               schema:
@@ -70,8 +69,7 @@ paths:
         - oauth2: [ ocx-sc:all, ocx-sc:read ]
       tags:
         - SearchConfigInternal
-      summary: Finds search configs by product, app and page.
-      description: The search configs are found by the criteria product, app and page.
+      description: Find a search config by product, app and page
       operationId: loadByProductAppAndPage
       requestBody:
         required: true
@@ -81,7 +79,7 @@ paths:
               $ref: '#/components/schemas/SearchConfigLoadRequest'
       responses:
         "200":
-          description: OK
+          description: Search config retrieved successfully
           content:
             application/json:
               schema:
@@ -100,8 +98,7 @@ paths:
         - oauth2: [ ocx-sc:all, ocx-sc:read ]
       tags:
         - SearchConfigInternal
-      summary: Finds search configs by it's id.
-      description: Gets the search config by it's id.
+      description: Get a search config by its id.
       operationId: getConfigById
       parameters:
         - name: id
@@ -111,20 +108,19 @@ paths:
             type: string
       responses:
         "200":
-          description: OK
+          description: Search config retrieved successfully
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/SearchConfig'
         "404":
-          description: Not found
+          description: Search config not found
     put:
       security:
         - oauth2: [ ocx-sc:all, ocx-sc:write ]
       tags:
         - SearchConfigInternal
-      summary: Updates the search config.
-      description: Updates the search config.
+      description: Updates a search config by its id
       operationId: updateConfig
       parameters:
         - name: id
@@ -140,7 +136,7 @@ paths:
               $ref: '#/components/schemas/UpdateSearchConfigRequest'
       responses:
         "200":
-          description: OK
+          description: Search config updated successfully
           content:
             application/json:
               schema:
@@ -152,14 +148,13 @@ paths:
               schema:
                 $ref: '#/components/schemas/ProblemDetailResponse'
         "404":
-          description: Search-config not found
+          description: Search config not found
     delete:
       security:
         - oauth2: [ ocx-sc:all, ocx-sc:delete ]
       tags:
         - SearchConfigInternal
-      summary: Deletes the search config.
-      description: Deletes the search config.
+      description: Delete a search config by its id
       operationId: deleteConfig
       parameters:
         - name: id
@@ -169,9 +164,9 @@ paths:
             type: string
       responses:
         "204":
-          description: Config deleted
+          description: Search config deleted successfully
         "400":
-          description: Internal Server Error
+          description: Bad request
           content:
             application/json:
               schema:
