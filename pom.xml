@@ -183,7 +183,7 @@
               <goal>generate</goal>
             </goals>
             <configuration>
-              <inputSpec>src/main/openapi/search-config-openapi-internal.yaml</inputSpec>
+              <inputSpec>src/main/openapi/search-config-internal.yaml</inputSpec>
               <apiPackage>gen.org.tkit.onecx.search.config.rs.internal</apiPackage>
               <modelPackage>gen.org.tkit.onecx.search.config.rs.internal.model</modelPackage>
             </configuration>
