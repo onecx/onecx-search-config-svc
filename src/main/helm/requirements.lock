@@ -1,6 +1,0 @@
-dependencies:
-- name: helm-quarkus-app
-  repository: oci://ghcr.io/onecx/charts
-  version: 0.35.0
-digest: sha256:bb4e95815cb74da31428b365a11024c8c26a4b1124057c04797483a66641f45b
-generated: "2024-10-11T14:06:53.867432506+02:00"
