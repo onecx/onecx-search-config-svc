@@ -84,9 +84,7 @@ public class SearchConfigDAO extends AbstractDAO<SearchConfig> {
             addSearchStringPredicate(predicates, criteriaBuilder, searchConfigRoot.get(SearchConfig_.PAGE),
                     loadCriteria.getPage());
 
-            if (!predicates.isEmpty()) {
-                criteriaQuery.where(predicates.toArray(new Predicate[] {}));
-            }
+            criteriaQuery.where(predicates.toArray(new Predicate[] {}));
 
             TypedQuery<SearchConfig> query = em.createQuery(criteriaQuery);
             return query.getResultList();

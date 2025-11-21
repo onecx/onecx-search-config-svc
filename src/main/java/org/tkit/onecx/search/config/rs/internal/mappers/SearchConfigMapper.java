@@ -3,7 +3,6 @@ package org.tkit.onecx.search.config.rs.internal.mappers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -85,8 +84,7 @@ public interface SearchConfigMapper {
     default List<SearchConfigLoadResultDTO> mapToSearchConfigLoadResultList(List<SearchConfig> searchConfigList) {
 
         return searchConfigList.stream()
-                .map(this::mapToSearchConfigLoadResult)
-                .collect(Collectors.toList());
+                .map(this::mapToSearchConfigLoadResult).toList();
     }
 
     @Mapping(target = "removeColumnsItem", ignore = true)
