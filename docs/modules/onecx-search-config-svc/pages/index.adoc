@@ -1,8 +1,7 @@
 include::onecx-search-config-svc-attributes.adoc[opts=optional]
 
-== onecx-search-config-svc
+= OneCX Search Config Backend Service
 
-include::docs.adoc[opts=optional]
 
 
 include::onecx-search-config-svc-docs.adoc[opts=optional]
