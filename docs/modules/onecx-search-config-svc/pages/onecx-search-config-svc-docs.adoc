@@ -1,10 +1,12 @@
 
 include::onecx-search-config-svc-attributes.adoc[opts=optional]
 
-=== Default properties
+{docker-registry}[Link to Docker registry]
+
+== Default properties
 
 .{properties-file}
-[%collapsible%open]
+[%collapsible]
 ====
 [source,properties,subs=attributes+]
 ----
@@ -34,22 +36,18 @@ onecx.permission.token.claim.path=realm_access/roles
 ----
 ====
 
-=== Extensions
-
+== Extensions
+.Extensions List
+[%collapsible]
+====
 include::onecx-search-config-svc-extensions.adoc[opts=optional]
+====
 
-=== Container
+== Helm
 
-{docker-registry}[Docker registry]
+{helm-registry}[Link to Helm registry]
 
-
-=== Helm
-
-{helm-registry}[Helm registry]
-
-Default values
-
-.{helm-file}
+.Default values in {helm-file}
 [source,yaml]
 ----
 app:
@@ -70,8 +68,3 @@ app:
         description: OneCX Search Config Backend Service
         name: OneCX Search Config SVC
 ----
-
-description: OneCX Search Config Backend Service
-        name: OneCX Search Config SVC
-----
-
