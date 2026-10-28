@@ -18,7 +18,7 @@ import io.quarkus.test.junit.QuarkusTest;
 
 @QuarkusTest
 @TestHTTPEndpoint(SearchConfigControllerInternal.class)
-@WithDBData(value = "search-config-data.xml", deleteBeforeInsert = true, deleteAfterTest = true, rinseAndRepeat = true)
+@WithDBData(value = "search-config-data.xml", deleteBeforeInsert = true, rinseAndRepeat = true)
 @GenerateKeycloakClient(clientName = "testClient", scopes = "ocx-sc:all")
 class SearchConfigControllerInternalTest extends AbstractTest {
 
